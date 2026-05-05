@@ -168,7 +168,6 @@ DAPClient >> gotoTarget: gotoTargetArguments onResponse: aBlock [
 DAPClient >> handleEvent: eventAsDict [
 
 	| eventType handler |
-	Transcript showCr: eventAsDict.
 	dapHistory addEvent: eventAsDict.
 
 	eventType := eventAsDict at: 'event'.
