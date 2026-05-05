@@ -318,9 +318,30 @@ SindarinDAPClient >> stepUntil: aPredicate [
 ]
 
 { #category : 'stepping - steps' }
+SindarinDAPClient >> stepUntil: aPredicate do: aBlock [
+	"aPredicate is expected to be a ByteString or a BlockClosure"
+
+	aPredicate stepUntilOn: self do: aBlock
+]
+
+{ #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilBlock: aBlock [
 
 	[ self isExecutionFinished or: [ aBlock value ] ] whileFalse: [
+			self handleAsyncRawResponse: [ :resp |
+					self
+						stepIn: (DAPStepInArguments new
+								 threadId: self mainThreadId;
+								 yourself)
+						onResponse: resp ] ]
+]
+
+{ #category : 'stepping - steps' }
+SindarinDAPClient >> stepUntilBlock: aBooleanBlock do: aBlock [
+
+	[ self isExecutionFinished or: [ aBooleanBlock value ] ] whileFalse: [
+			aBlock value.
+
 			self handleAsyncRawResponse: [ :resp |
 					self
 						stepIn: (DAPStepInArguments new
@@ -336,6 +357,23 @@ SindarinDAPClient >> stepUntilString: aString [
 		self isExecutionFinished or: [
 			self evaluateBoolean: aString frameId: self currentFrameId ] ]
 		whileFalse: [
+				self handleAsyncRawResponse: [ :resp |
+						self
+							stepIn: (DAPStepInArguments new
+									 threadId: self mainThreadId;
+									 yourself)
+							onResponse: resp ] ]
+]
+
+{ #category : 'stepping - steps' }
+SindarinDAPClient >> stepUntilString: aString do: aBlock [
+
+	[
+		self isExecutionFinished or: [
+			self evaluateBoolean: aString frameId: self currentFrameId ] ]
+		whileFalse: [
+				aBlock value.
+
 				self handleAsyncRawResponse: [ :resp |
 						self
 							stepIn: (DAPStepInArguments new
