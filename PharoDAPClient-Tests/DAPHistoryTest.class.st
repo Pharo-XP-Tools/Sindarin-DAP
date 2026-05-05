@@ -17,7 +17,7 @@ DAPHistoryTest >> setUp [
 ]
 
 { #category : 'tests' }
-DAPHistoryTest >> testEventsOfTypeReturnACollectionOfEventBasedOnTheirType [
+DAPHistoryTest >> testEventsOfType [
 
 	| breakpoints stopped continued |
 
