@@ -177,6 +177,23 @@ SindarinDAPClient >> handleAsyncResponse: anAction returning: key [
 	^ (self handleAsyncResponse: anAction) at: key
 ]
 
+{ #category : 'stack access' }
+SindarinDAPClient >> hasEnteredNewCall [
+
+	| oldStackSize newStackSize |
+	oldStackSize := (self dapHistory lastResponseForCommand: 'stackTrace')
+		                at: 'body'
+		                at: 'totalFrames'.
+
+	self currentFrame.
+
+	newStackSize := (self dapHistory lastResponseForCommand: 'stackTrace')
+		                at: 'body'
+		                at: 'totalFrames'.
+
+	^ oldStackSize < newStackSize
+]
+
 { #category : 'private - breakpoints' }
 SindarinDAPClient >> helperAddDataBreakpointInfo: aDataBreakpointInfo breakpoint: aDataBreakpoint [
 	"expect breakpointInfo to be setup and aDataBreakpoint setup without the dataId wich is return by breakpointInfo"

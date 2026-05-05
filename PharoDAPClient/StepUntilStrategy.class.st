@@ -11,19 +11,8 @@ StepUntilStrategy >> continue: sindarinDAPClient [
 	"work in progress for function bp only"
 
 	sindarinDAPClient stepUntil: [
-			| currentFrame oldStackSize newStackSize |
-			oldStackSize := (sindarinDAPClient dapHistory
-				                 lastResponseForCommand: 'stackTrace')
-				                at: 'body'
-				                at: 'totalFrames'.
-			currentFrame := sindarinDAPClient currentFrame.
-			newStackSize := (sindarinDAPClient dapHistory
-				                 lastResponseForCommand: 'stackTrace')
-				                at: 'body'
-				                at: 'totalFrames'.
-
-			oldStackSize < newStackSize and: [
+			sindarinDAPClient hasEnteredNewCall and: [
 					sindarinDAPClient breakpointManager
-						shouldBreakFor: currentFrame
+						shouldBreakFor: sindarinDAPClient currentFrame
 						evaluator: sindarinDAPClient ] ]
 ]
