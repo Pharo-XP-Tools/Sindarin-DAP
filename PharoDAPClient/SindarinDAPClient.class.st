@@ -76,6 +76,14 @@ SindarinDAPClient >> evaluate: aString frameId: aNumber [
 ]
 
 { #category : 'evaluating' }
+SindarinDAPClient >> evaluate: aString frameId: aNumber onErrorDo: aBlock [
+
+	^ [ self evaluate: aString frameId: aNumber ]
+		  on: RequestFailedError
+		  do: [ :ex | aBlock value ]
+]
+
+{ #category : 'evaluating' }
 SindarinDAPClient >> evaluateBoolean: aString frameId: aNumber [
 
 	| resp |
@@ -163,7 +171,7 @@ SindarinDAPClient >> handleAsyncResponse: anAction [
 	response := self handleAsyncRawResponse: anAction.
 
 	(response at: 'success') ifFalse: [
-		^ Error new signal: 'Request failed !' ].
+		^ RequestFailedError new signal: 'Request failed !' ].
 
 	^ response at: 'body'
 ]
@@ -242,6 +250,21 @@ SindarinDAPClient >> mainThreadId [
 ]
 
 { #category : 'stack access' }
+SindarinDAPClient >> receiver [
+
+	| frameId local variables |
+	frameId := self currentFrameId.
+	local := (self scopesForFrame: frameId) first at:
+		         'variablesReference'.
+
+	variables := self variablesForReference: local.
+
+	variables size < 1 ifTrue: [ ^ nil ].
+
+	^ variables first
+]
+
+{ #category : 'stack access' }
 SindarinDAPClient >> scopesForFrame: aFrameId [
 	"take a valid frame id and return a collection of DAPScope"
 
@@ -251,6 +274,19 @@ SindarinDAPClient >> scopesForFrame: aFrameId [
 					  scopes: (DAPScopesArguments new frameId: aFrameId)
 					  onResponse: onResponse ]
 		  returning: 'scopes'
+]
+
+{ #category : 'stack access' }
+SindarinDAPClient >> sender [
+
+	| stackFrames frameId |
+	stackFrames := self stackFrames: self mainThreadId.
+
+	stackFrames size < 2 ifTrue: [ ^ nil ].
+
+	frameId := stackFrames second at: 'id'.
+	
+	^ self variableFor: backend instanceName inStackFrame: frameId
 ]
 
 { #category : 'private - breakpoints' }
@@ -314,14 +350,16 @@ SindarinDAPClient >> stackFrames: threadId [
 SindarinDAPClient >> stepUntil: aPredicate [
 	"aPredicate is expected to be a ByteString or a BlockClosure"
 
-	aPredicate stepUntilOn: self
+	[aPredicate stepUntilOn: self] on: RequestFailedError do: [ :ex | ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntil: aPredicate do: aBlock [
 	"aPredicate is expected to be a ByteString or a BlockClosure"
 
-	aPredicate stepUntilOn: self do: aBlock
+	[ aPredicate stepUntilOn: self do: aBlock ]
+		on: RequestFailedError
+		do: [ :ex |  ]
 ]
 
 { #category : 'stepping - steps' }
@@ -383,16 +421,25 @@ SindarinDAPClient >> stepUntilString: aString do: aBlock [
 ]
 
 { #category : 'stack access' }
-SindarinDAPClient >> variableReferenceFor: aVariableName inStackFrame: frameId [
-
-	"return the dap variable reference for aVariableName in the frameId stack frame"
+SindarinDAPClient >> variableFor: aVariableName inStackFrame: frameId [
+	"return the dap variable for aVariableName in the frameId stack frame"
 
 	| varRefScopeLocal variablesLocal |
 	varRefScopeLocal := (self scopesForFrame: frameId) first at:
 		                    'variablesReference'.
 	variablesLocal := self variablesForReference: varRefScopeLocal.
-	^ (variablesLocal detect: [ :var | (var at: 'name') = aVariableName ])
-		  at: 'variablesReference'
+	^ variablesLocal
+		  detect: [ :var | (var at: 'name') = aVariableName ]
+		  ifNone: [ nil ]
+]
+
+{ #category : 'stack access' }
+SindarinDAPClient >> variableReferenceFor: aVariableName inStackFrame: frameId [
+	"return the dap variable reference for aVariableName in the frameId stack frame"
+	| var |
+	var := self variableFor: aVariableName inStackFrame: frameId.
+	var ifNil: [ ^ nil ].
+	^ var at: 'variablesReference'.
 ]
 
 { #category : 'stack access' }
