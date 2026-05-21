@@ -16,7 +16,8 @@ DAPClientForPY >> attachArguments [
 			   ('host' -> 'localhost').
 			   ('port' -> 5678) } asDictionary).
 		  ('redirectOutput' -> true).
-		  ('showReturnValue' -> true) } asDictionary
+		  ('showReturnValue' -> true).
+		  ('justMyCode' -> false) } asDictionary
 ]
 
 { #category : 'initialization' }
