@@ -9,15 +9,10 @@ Class {
 BaselineOfPharoDAPClient >> baseline: spec [
 
 	<baseline>
-	spec
-		baseline: 'PharoLanguageServer'
-		with: [
-		spec repository: 'github://FlavienVolant/Pharo-LanguageServer:v5' ].
-	spec package: 'PharoDAPClient'.
-	spec package: 'PharoDAPClient-Tests'.
-]
-
-{ #category : 'accessing' }
-BaselineOfPharoDAPClient >> projectClass [
-	^ MetacelloCypressBaselineProject
+	spec for: #common do: [
+			spec baseline: 'PharoLanguageServer' with: [
+					spec repository:
+						'github://Pharo-XP-Tools/Pharo-LanguageServer:DAP-Tools' ].
+			spec package: 'PharoDAPClient'.
+			spec package: 'PharoDAPClient-Tests' ]
 ]
