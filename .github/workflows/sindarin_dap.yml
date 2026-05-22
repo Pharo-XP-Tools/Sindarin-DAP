@@ -1,0 +1,15 @@
+name: Tests
+
+on: [push, pull_request]    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hpi-swa/setup-smalltalkCI@v1
+        with:
+          smalltalk-image: Pharo64-13
+      - run: smalltalkci -s Pharo64-13
+        shell: bash
+        timeout-minutes: 15
