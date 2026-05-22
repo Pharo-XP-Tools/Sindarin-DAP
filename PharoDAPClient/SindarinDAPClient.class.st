@@ -252,16 +252,9 @@ SindarinDAPClient >> mainThreadId [
 { #category : 'stack access' }
 SindarinDAPClient >> receiver [
 
-	| frameId local variables |
-	frameId := self currentFrameId.
-	local := (self scopesForFrame: frameId) first at:
-		         'variablesReference'.
-
-	variables := self variablesForReference: local.
-
-	variables size < 1 ifTrue: [ ^ nil ].
-
-	^ variables first
+	^ self
+		  variableFor: backend instanceName
+		  inStackFrame: self currentFrameId
 ]
 
 { #category : 'stack access' }
