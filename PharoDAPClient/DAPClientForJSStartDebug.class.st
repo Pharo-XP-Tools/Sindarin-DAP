@@ -9,16 +9,6 @@ Class {
 	#tag : 'Examples'
 }
 
-{ #category : 'initialization' }
-DAPClientForJSStartDebug >> attachArguments [
-
-	| dict |
-	dict := super attachArguments.
-	attachOtherArguments addAll: dict.
-
-	^ attachOtherArguments
-]
-
 { #category : 'accessing' }
 DAPClientForJSStartDebug >> attachOtherArguments [
 
@@ -28,11 +18,5 @@ DAPClientForJSStartDebug >> attachOtherArguments [
 { #category : 'accessing' }
 DAPClientForJSStartDebug >> attachOtherArguments: anAttachArguments [
 
-	attachOtherArguments := anAttachArguments
-]
-
-{ #category : 'handle request' }
-DAPClientForJSStartDebug >> handleStartDebuggingRequest: aStartDebuggingRequest [
-
-	"stop"
+	 attachArguments := anAttachArguments addAll: attachOtherArguments. 
 ]

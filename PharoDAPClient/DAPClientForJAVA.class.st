@@ -6,7 +6,7 @@ Class {
 	#tag : 'Examples'
 }
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 DAPClientForJAVA >> attachArguments [
 
 	^ {
@@ -21,15 +21,6 @@ DAPClientForJAVA >> attachArguments [
 DAPClientForJAVA >> initialize [
 
 	super initialize.
-
-	DAPClientBuilder new
-		client: self;
-		port: 64894;
-		adapterID: 'java';
-		attachArguments: self attachArguments;
-		breakpoint:
-			'/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java'
-		line: 9;
-		backend: DAPBackendJAVA new;
-		startClientSession
+	adapterID := 'java'.
+	backend := DAPBackendJAVA new
 ]

@@ -9,7 +9,7 @@ Class {
 	#tag : 'Examples'
 }
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 DAPClientForJS >> attachArguments [
 
 	^ {
@@ -44,19 +44,17 @@ DAPClientForJS >> dapRegistryAt: keyAsString put: valueAsString [
 { #category : 'handle request' }
 DAPClientForJS >> handleStartDebuggingRequest: aStartDebuggingRequest [
 
-	child := DAPClientForJSStartDebug new attachOtherArguments:
-		         (aStartDebuggingRequest at: 'arguments' at: 'configuration').
-	child startSession.
-
-	(ClientDAPPresenter newWithClient: child) open.
-
-	self closeConnection
+	^ DAPClientForJSStartDebug new attachOtherArguments:
+		  (aStartDebuggingRequest at: 'arguments' at: 'configuration')
 ]
 
 { #category : 'initialization' }
 DAPClientForJS >> initialize [
 
 	super initialize.
+
+	adapterID := 'node'.
+	backend := DAPBackendJS new.
 
 	requestHandlers
 		at: 'startDebugging'
@@ -73,19 +71,4 @@ DAPClientForJS >> initializeDapRegistry [
 						 expression: 'globalThis.__dap_registry__';
 						 value: '{}';
 						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
-]
-
-{ #category : 'initialization' }
-DAPClientForJS >> startSession [
-
-	DAPClientBuilder new
-		client: self;
-		adapterID: 'node';
-		port: 5678;
-		attachArguments: self attachArguments;
-		breakpoint:
-			'/Users/flavienvolant/Documents/sindarin-dap/js/script.js'
-		line: 1;
-		backend: DAPBackendJS new;
-		startClientSession
 ]

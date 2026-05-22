@@ -2,14 +2,23 @@ Class {
 	#name : 'SindarinDAPClient',
 	#superclass : 'DAPClient',
 	#instVars : [
-		'backend',
 		'breakpointManager',
-		'continueStrategy'
+		'continueStrategy',
+		'backend'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
 	#tag : 'Model'
 }
+
+{ #category : 'as yet unclassified' }
+SindarinDAPClient class >> buildClientOnPort: aPort withBreakpointOnFile: aFileReference onLine: anInteger [
+
+	^ self new
+		  port: aPort;
+		  breakpointOnFile: aFileReference line: anInteger;
+		  startSession
+]
 
 { #category : 'accessing' }
 SindarinDAPClient >> backend [

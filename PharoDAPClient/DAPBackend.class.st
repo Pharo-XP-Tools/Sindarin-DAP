@@ -1,3 +1,8 @@
+"
+I am an abstract for DAP backends. 
+
+I am providing methods to get specific data from projects with calls to adapters. 
+"
 Class {
 	#name : 'DAPBackend',
 	#superclass : 'Object',

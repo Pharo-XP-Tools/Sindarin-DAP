@@ -9,12 +9,24 @@ Class {
 		'eventHandlers',
 		'responseHandlers',
 		'requestHandlers',
-		'dapHistory'
+		'dapHistory',
+		'attachArguments',
+		'adapterID',
+		'host',
+		'breakpoints',
+		'functionBreakpoints',
+		'port'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
 	#tag : 'Model'
 }
+
+{ #category : 'accessing' }
+DAPClient >> adapterID: aString [
+
+	adapterID := aString
+]
 
 { #category : 'accessing' }
 DAPClient >> adapterSupport: aCapabilityName [
@@ -25,6 +37,12 @@ DAPClient >> adapterSupport: aCapabilityName [
 	initResponse ifNil: [ ^ false ].
 	
 	^ initResponse at: 'body' at: aCapabilityName ifAbsent: [ ^ false ]
+]
+
+{ #category : 'requests' }
+DAPClient >> attach [
+
+	self attach: self attachArguments onResponse: [ :resp | ]
 ]
 
 { #category : 'requests' }
@@ -39,6 +57,16 @@ DAPClient >> attach: attachArguments onResponse: aBlock [
 	| request |
 	request := DAPAttachRequest withArguments: attachArguments.
 	self sendRequest: request onResponse: aBlock 
+]
+
+{ #category : 'accessing' }
+DAPClient >> breakpointOnFile: scriptPath line: anNumber [
+	"Setup the dictionnary of breaking which has to be install"
+
+	breakpoints at: scriptPath ifAbsentPut: [ OrderedCollection new ].
+
+	(breakpoints at: scriptPath) add:
+		(DAPSourceBreakpoint new line: anNumber)
 ]
 
 { #category : 'connection open/close' }
@@ -64,6 +92,14 @@ DAPClient >> configurationDone [
 	| request |
 	request := DAPConfigurationDoneRequest new.
 	self sendRequest: request
+]
+
+{ #category : 'private' }
+DAPClient >> connectClient: aBlock [
+
+	self connectTo: host port: port.
+	self startListening.
+	self initialize: (self initializeArguments) onResponse: aBlock.
 ]
 
 { #category : 'connection open/close' }
@@ -134,6 +170,21 @@ DAPClient >> evaluate: evaluateArguments onResponse: aBlock [
 	| req |
 	req := DAPEvaluateRequest withArguments: evaluateArguments.
 	self sendRequest: req onResponse: aBlock 
+]
+
+{ #category : 'accessing' }
+DAPClient >> functionBreakpoint: functionName [
+
+	functionBreakpoints add:
+		(DAPFunctionBreakpoint new name: functionName)
+]
+
+{ #category : 'accessing' }
+DAPClient >> functionBreakpoint: functionName condition: aString [
+
+	functionBreakpoints add: (DAPFunctionBreakpoint new
+			 name: functionName;
+			 condition: aString)
 ]
 
 { #category : 'requests' }
@@ -225,6 +276,12 @@ DAPClient >> handleResponse: responseAsDict [
 	callback value: responseAsDict
 ]
 
+{ #category : 'accessing' }
+DAPClient >> host: aString [
+
+	host := aString
+]
+
 { #category : 'initialization' }
 DAPClient >> initialize [
 
@@ -234,7 +291,10 @@ DAPClient >> initialize [
 	responseHandlers := Dictionary new.
 	eventHandlers := Dictionary new.
 	requestHandlers := Dictionary new.
-	dapHistory := DAPHistory new
+	dapHistory := DAPHistory new.
+	host := 'localhost'.
+	breakpoints := Dictionary new.
+	functionBreakpoints := OrderedCollection new
 ]
 
 { #category : 'requests' }
@@ -251,6 +311,27 @@ DAPClient >> initialize: initializeArguments onResponse: aBlock [
 	| request |
 	request := DAPInitializeRequest withArguments: initializeArguments.
 	self sendRequest: request onResponse: aBlock.
+]
+
+{ #category : 'private' }
+DAPClient >> initializeArguments [
+
+	^ DAPInitializeRequestArguments new
+		  clientID: 'my-dap-client';
+		  clientName: 'Pharo dap client';
+		  adapterID: adapterID;
+		  pathFormat: 'path';
+		  linesStartAt1: true;
+		  columnsStartAt1: true;
+		  supportsProgressReporting: true;
+		  supportsMemoryReferences: true;
+		  supportsInvalidatedEvent: true;
+		  supportsRunInTerminalRequest: true;
+		  supportsVariableType: true;
+		  supportsArgsCanBeInterpretedByShell: true;
+		  supportsMemoryEvent: true;
+		  supportsStartDebuggingRequest: true;
+		  locale: 'en'
 ]
 
 { #category : 'requests' }
@@ -365,6 +446,18 @@ DAPClient >> sendRequest: aDAPRequest onResponse: callBackBlock [
 	socket flush
 ]
 
+{ #category : 'private' }
+DAPClient >> setBreakpoints [
+
+	breakpoints keysAndValuesDo: [ :scriptPath :sourceBreakpoints |
+			| args |
+			args := DAPSetBreakpointsArguments new
+				        source: (DAPSource new path: scriptPath);
+				        breakpoints: sourceBreakpoints asArray.
+
+			self setBreakpoints: args ]
+]
+
 { #category : 'requests' }
 DAPClient >> setBreakpoints: setBreakPointsArguments [
 
@@ -412,6 +505,16 @@ DAPClient >> setExpression: setExpressionArguments onResponse: aBlock [
 	self sendRequest: request onResponse: aBlock 
 ]
 
+{ #category : 'private' }
+DAPClient >> setFunctionBreakpoints [
+
+	| args |
+	args := DAPSetFunctionBreakpointsArguments new breakpoints:
+		        functionBreakpoints asArray.
+
+	self setFunctionBreakpoints: args
+]
+
 { #category : 'requests' }
 DAPClient >> setFunctionBreakpoints: setFunctionBreakpointsArguments [
 
@@ -455,6 +558,19 @@ DAPClient >> startListening [
 
 		] repeat 
 	] fork
+]
+
+{ #category : 'api' }
+DAPClient >> startSession [
+
+	self onEvent: 'initialized' do: [ :event |
+			self setBreakpoints.
+			self setFunctionBreakpoints.
+			self configurationDone ].
+
+	self connectClient: [ :resp | self attachClient ].
+
+	^ self
 ]
 
 { #category : 'requests' }

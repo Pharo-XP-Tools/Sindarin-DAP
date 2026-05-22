@@ -50,7 +50,7 @@ DAPClientTest >> startSession [
 		client: client;
 		port: port;
 		adapterID: 'Mock';
-		startClientSession
+		startSession
 ]
 
 { #category : 'tests' }

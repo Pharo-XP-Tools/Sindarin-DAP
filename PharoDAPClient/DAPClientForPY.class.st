@@ -25,16 +25,8 @@ DAPClientForPY >> initialize [
 
 	super initialize.
 
-	DAPClientBuilder new
-		client: self;
-		port: 5678;
-		adapterID: 'python';
-		attachArguments: self attachArguments;
-		breakpoint:
-			'/Users/flavienvolant/Documents/sindarin-dap/py/script.py'
-		line: 10;
-		backend: DAPBackendPY new;
-		startClientSession
+	adapterID := 'python'.
+	backend := DAPBackendPY new
 ]
 
 { #category : 'stack access' }

@@ -1,3 +1,6 @@
+"
+Backend for Java, using Java synthax to answer DAP api-calls
+"
 Class {
 	#name : 'DAPBackendJAVA',
 	#superclass : 'DAPBackend',

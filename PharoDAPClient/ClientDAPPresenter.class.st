@@ -1,3 +1,8 @@
+"
+I am a presenter design to interact with the DAP. 
+
+Users can do all DAP provided actions with the User Interface such as: steps, finding variables, setting breakpoints, viewing the exécution stack, ...
+"
 Class {
 	#name : 'ClientDAPPresenter',
 	#superclass : 'SpPresenter',

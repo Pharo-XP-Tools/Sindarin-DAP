@@ -1,3 +1,6 @@
+"
+Backend for JavaScript, using JavaScript synthax to answer DAP api-calls
+"
 Class {
 	#name : 'DAPBackendJS',
 	#superclass : 'DAPBackend',
