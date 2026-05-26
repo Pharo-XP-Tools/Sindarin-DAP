@@ -90,7 +90,7 @@ python -m debugpy --listen 5678 --wait-for-client py/script.py
 - In a Pharo Playground, run:
 ``` smalltalk
 client := ClientDAPPresenter newWithClient: 
-				(SindarinDAPClientForPY 
+				(SindarinDAPClientForPython 
 					buildClientOnHost: anHost
 					onPort: aPort
 					withBreakpointOnFile: 'myPythonFile.py' 
@@ -257,6 +257,7 @@ To use `java-debug`, you must start `eclipse.jdt.ls` with the debug plugin inclu
 ```
 
 ### Starting a Debug Session
+
 Once eclipse.jdt.ls is running, send the following command via your LSP client:
 ``` json
 {
@@ -265,42 +266,20 @@ Once eclipse.jdt.ls is running, send the following command via your LSP client:
 ```
 The server will respond with a port number where the DAP adapter is listening.
 
-### Client Configuration (Pharo)
-Use `DAPClientForJAVA` and configure it with the port returned by the LSP server:
-``` smalltalk
-	DAPClientBuilder new
-		client: self;
-		port: 63461; "Replace with the returned port"
-		adapterID: 'java';
-		attachArguments: self attachArguments;
-		breakpoint:
-			'/path/to/your/project/src/main/java/example/Main.java'
-		line: 5;
-		breakpoint:
-			'/path/to/your/project/src/main/java/example/Main.java'
-		line: 9;
-		functionBreakpoint: 'example.Bar#toto'
-		condition:
-			'true';
-		startClientSession
-
-attachArguments
-
-	^ {
-		  ('name' -> 'Attach to Java').
-		  ('type' -> 'server').
-		  ('hostName' -> 'localhost').
-		  ('port' -> 5005).
-		  ('projectName' -> 'java') } asDictionary
-```
-
 ### Starting the Debugging Session
+
 - Start your Java program with JDWP enabled
 - Start `eclipse.jdt.ls` with the `java-debug` plugin
 - Send the `vscode.java.startDebugSession` command via your LSP client
 - Retrieve the port from the response
 - In a Pharo Playground, run:
 ``` smalltalk
-client := ClientDAPPresenter newWithClient: DAPClientForJAVA new.
+client := ClientDAPPresenter newWithClient: SindarinDAPClientForJava new.
+					buildClientOnHost: anHost
+					onPort: aPort
+					withBreakpointOnFile: 'myPythonFile.py' 
+					onLine: aLineNumber).
 client open.
 ```
+
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
