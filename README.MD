@@ -84,23 +84,6 @@ Run your Python script with `debugpy` and wait for the client to attach:
 python -m debugpy --listen 5678 --wait-for-client py/script.py
 ```
 
-### Client Configuration (Pharo)
-
-The DAP client is configured via `SindarinDAPClientForPY`.
-
-You must adapt the following method for your setup:
-``` smalltalk
-attachArguments
-	^ {
-		  ('name' -> 'Attach to Python').
-		  ('type' -> 'python').
-		  ('connect' -> {
-			   ('host' -> 'localhost').
-			   ('port' -> 5678) } asDictionary).
-		  ('redirectOutput' -> true).
-		  ('showReturnValue' -> true) } asDictionary
-```
-
 ### Starting the Debugging Session
 
 - Start the `debugpy` adapter (see above)
@@ -108,13 +91,14 @@ attachArguments
 ``` smalltalk
 client := ClientDAPPresenter newWithClient: 
 				(SindarinDAPClientForPY 
-					buildClientOnPort: aPort 
+					buildClientOnHost: anHost
+					onPort: aPort
 					withBreakpointOnFile: 'myPythonFile.py' 
 					onLine: aLineNumber).
 client open.
 ```
 
-Where `aPort` is the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
 
 ## JavaScript (Node.js)
 
