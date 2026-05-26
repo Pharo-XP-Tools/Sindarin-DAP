@@ -52,6 +52,17 @@ SindarinDAPClient >> currentFrame [
 ]
 
 { #category : 'stack access' }
+SindarinDAPClient >> currentFrameBody [
+
+	^ self handleAsyncResponse: [ :response |
+			  self
+				  stackTrace: (DAPStackTraceArguments new
+						   threadId: self mainThreadId;
+						   levels: 1)
+				  onResponse: response ]
+]
+
+{ #category : 'stack access' }
 SindarinDAPClient >> currentFrameId [
 
 	^ self currentFrame at: 'id'
