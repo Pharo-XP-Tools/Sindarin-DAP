@@ -277,9 +277,9 @@ The server will respond with a port number where the DAP adapter is listening.
 client := ClientDAPPresenter newWithClient: SindarinDAPClientForJava new.
 					buildClientOnHost: anHost
 					onPort: aPort
-					withBreakpointOnFile: 'myPythonFile.py' 
+					withBreakpointOnFile: 'myJavaFile.jar' 
 					onLine: aLineNumber).
 client open.
 ```
 
-Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myJavaFile.jar` the file `aLineNumber` the line on which the breakpoint should be placed.
