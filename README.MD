@@ -106,7 +106,11 @@ attachArguments
 - Start the `debugpy` adapter (see above)
 - In a Pharo Playground, run:
 ``` smalltalk
-client := ClientDAPPresenter newWithClient: (SindarinDAPClientForPY buildClientOnPort: aPort withBreakpointOnFile: 'myPythonFile.py' onLine: aLineNumber.
+client := ClientDAPPresenter newWithClient: 
+				(SindarinDAPClientForPY 
+					buildClientOnPort: aPort 
+					withBreakpointOnFile: 'myPythonFile.py' 
+					onLine: aLineNumber).
 client open.
 ```
 
