@@ -10,7 +10,7 @@ The client currently works exclusively over socket connections.
 ``` smalltalk
 Metacello new
 	baseline: 'PharoDAPClient';
-	repository: 'github://FlavienVolant/sindarin-dap:main';
+	repository: 'github://Pharo-XP-Tools/Sindarin-DAP:main';
 	load
 ```
 
@@ -43,18 +43,6 @@ Since the client may need to store data inside the debuggee, and this behavior d
 
 These require DAP capabilities such as `supportSetExpressions` or `supportSetVariables`.
 
-
-### `DAPClientBuilder`
-
-`DAPClientBuilder` is the recommended way to configure and initialize a DAP client.
-
-It handles:
-- The handshake with the DAP server
-- Sending initialization data at the correct time
-
-See the `Examples` `initialize` methods for usage.
-
-
 ### `ClientDAPPresenter`
 
 `ClientDAPPresenter` is a UI tool that displays all:
@@ -69,9 +57,9 @@ that go through the client.
 
 The client currently supports:
 
-- Python -> `DAPClientForPY`
-- Java -> `DAPClientForJAVA`
-- JavaScript -> `DAPClientForJS`
+- Python -> `SindarinDAPClientForPY`
+- Java -> `SindarinDAPClientForJAVA`
+- JavaScript -> `SindarinDAPClientForJS`
 
 Refer to the corresponding help/documentation for each language to learn how to set up your environment and start debugging.
 
@@ -96,43 +84,25 @@ Run your Python script with `debugpy` and wait for the client to attach:
 python -m debugpy --listen 5678 --wait-for-client py/script.py
 ```
 
-### Client Configuration (Pharo)
-The DAP client is configured via `DAPClientForPY`.
-You can adapt the following example to your setup:
-``` smalltalk
-	DAPClientBuilder new
-		client: self;
-		port: 5678;
-		adapterID: 'python';
-		attachArguments: self attachArguments;
-		breakpoint: '/path/to/your/script.py' line: 8;
-		functionBreakpoint: 'toto' condition: 'True';
-		startClientSession
-
-attachArguments
-	^ {
-		  ('name' -> 'Attach to Python').
-		  ('type' -> 'python').
-		  ('connect' -> {
-			   ('host' -> 'localhost').
-			   ('port' -> 5678) } asDictionary).
-		  ('redirectOutput' -> true).
-		  ('showReturnValue' -> true) } asDictionary
-```
-
 ### Starting the Debugging Session
 
 - Start the `debugpy` adapter (see above)
 - In a Pharo Playground, run:
 ``` smalltalk
-client := ClientDAPPresenter newWithClient: DAPClientForPY new.
+client := ClientDAPPresenter newWithClient: 
+				(SindarinDAPClientForPY 
+					buildClientOnHost: anHost
+					onPort: aPort
+					withBreakpointOnFile: 'myPythonFile.py' 
+					onLine: aLineNumber).
 client open.
 ```
+
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
 
 ## JavaScript (Node.js)
 
 This client uses the Microsoft **vscode-js-debug** adapter.
-
 
 ### Requirements
 
