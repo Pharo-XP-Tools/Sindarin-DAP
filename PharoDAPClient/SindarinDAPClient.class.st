@@ -263,6 +263,12 @@ SindarinDAPClient >> mainThreadId [
 	^ 1
 ]
 
+{ #category : 'api - breakpoints' }
+SindarinDAPClient >> port: anInteger [
+
+	port := anInteger 
+]
+
 { #category : 'stack access' }
 SindarinDAPClient >> receiver [
 

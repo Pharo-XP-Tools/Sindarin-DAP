@@ -47,20 +47,14 @@ DAPClient >> adapterSupport: aCapabilityName [
 { #category : 'requests' }
 DAPClient >> attach [
 
-	self attach: self attachArguments onResponse: [ :resp | ]
-]
-
-{ #category : 'requests' }
-DAPClient >> attach: attachArguments [
-
 	self attach: attachArguments onResponse: [ :resp | ]
 ]
 
 { #category : 'requests' }
-DAPClient >> attach: attachArguments onResponse: aBlock [
+DAPClient >> attach: aListOfAttachArguments onResponse: aBlock [
 
 	| request |
-	request := DAPAttachRequest withArguments: attachArguments.
+	request := DAPAttachRequest withArguments: aListOfAttachArguments.
 	self sendRequest: request onResponse: aBlock 
 ]
 
@@ -299,7 +293,9 @@ DAPClient >> initialize [
 	dapHistory := DAPHistory new.
 	host := 'localhost'.
 	breakpoints := Dictionary new.
-	functionBreakpoints := OrderedCollection new
+	functionBreakpoints := OrderedCollection new.
+
+	attachArguments := self setAttachArguments
 ]
 
 { #category : 'requests' }
@@ -451,6 +447,12 @@ DAPClient >> sendRequest: aDAPRequest onResponse: callBackBlock [
 	socket flush
 ]
 
+{ #category : 'requests' }
+DAPClient >> setAttachArguments [ 
+
+	self subclassResponsibility 
+]
+
 { #category : 'private' }
 DAPClient >> setBreakpoints [
 
@@ -573,7 +575,7 @@ DAPClient >> startSession [
 			self setFunctionBreakpoints.
 			self configurationDone ].
 
-	self connectClient: [ :resp | self attachClient ].
+	self connectClient: [ :resp | self attach ].
 
 	^ self
 ]

@@ -13,19 +13,6 @@ Class {
 }
 
 { #category : 'accessing' }
-SindarinDAPClientForJS >> attachArguments [
-
-	^ {
-		  ('name' -> 'attach pharo script.js').
-		  ('type' -> 'pwa-node').
-		  ('request' -> 'attach').
-		  ('address' -> 'localhost').
-		  ('port' -> '5005').
-		  ('continueOnAttach' -> true).
-		  ('skipFiles' -> { '<node_internals>/**' }) } asDictionary
-]
-
-{ #category : 'accessing' }
 SindarinDAPClientForJS >> child [
 
 	^ child
@@ -74,4 +61,17 @@ SindarinDAPClientForJS >> initializeDapRegistry [
 						 expression: 'globalThis.__dap_registry__';
 						 value: '{}';
 						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
+]
+
+{ #category : 'accessing' }
+SindarinDAPClientForJS >> setAttachArguments [
+
+	^ {
+		  ('name' -> 'attach pharo script.js').
+		  ('type' -> 'pwa-node').
+		  ('request' -> 'attach').
+		  ('address' -> 'localhost').
+		  ('port' -> '5005').
+		  ('continueOnAttach' -> true).
+		  ('skipFiles' -> { '<node_internals>/**' }) } asDictionary
 ]

@@ -9,8 +9,16 @@ Class {
 	#tag : 'Model'
 }
 
+{ #category : 'initialization' }
+SindarinDAPClientForJAVA >> initialize [
+
+	super initialize.
+	adapterID := 'java'.
+	backend := DAPBackendJAVA new
+]
+
 { #category : 'accessing' }
-SindarinDAPClientForJAVA >> attachArguments [
+SindarinDAPClientForJAVA >> setAttachArguments [
 
 	^ {
 		  ('name' -> 'Attach to Java').
@@ -18,12 +26,4 @@ SindarinDAPClientForJAVA >> attachArguments [
 		  ('hostName' -> 'localhost').
 		  ('port' -> 5005).
 		  ('projectName' -> 'java') } asDictionary
-]
-
-{ #category : 'initialization' }
-SindarinDAPClientForJAVA >> initialize [
-
-	super initialize.
-	adapterID := 'java'.
-	backend := DAPBackendJAVA new
 ]

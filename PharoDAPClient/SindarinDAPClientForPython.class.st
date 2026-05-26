@@ -10,7 +10,16 @@ Class {
 }
 
 { #category : 'initialization' }
-SindarinDAPClientForPython >> attachArguments [
+SindarinDAPClientForPython >> initialize [
+
+	super initialize.
+
+	adapterID := 'python'.
+	backend := DAPBackendPY new
+]
+
+{ #category : 'initialization' }
+SindarinDAPClientForPython >> setAttachArguments [
 
 	^ {
 		  ('name' -> 'Attach to Python').
@@ -21,15 +30,6 @@ SindarinDAPClientForPython >> attachArguments [
 		  ('redirectOutput' -> true).
 		  ('showReturnValue' -> true).
 		  ('justMyCode' -> false) } asDictionary
-]
-
-{ #category : 'initialization' }
-SindarinDAPClientForPython >> initialize [
-
-	super initialize.
-
-	adapterID := 'python'.
-	backend := DAPBackendPY new
 ]
 
 { #category : 'stack access' }
