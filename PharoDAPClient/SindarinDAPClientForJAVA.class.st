@@ -1,13 +1,16 @@
+"
+I am a Debugging Adapter Protocol to deal with Java adapaters.
+"
 Class {
-	#name : 'DAPClientForJAVA',
+	#name : 'SindarinDAPClientForJAVA',
 	#superclass : 'SindarinDAPClient',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
-DAPClientForJAVA >> attachArguments [
+SindarinDAPClientForJAVA >> attachArguments [
 
 	^ {
 		  ('name' -> 'Attach to Java').
@@ -18,7 +21,7 @@ DAPClientForJAVA >> attachArguments [
 ]
 
 { #category : 'initialization' }
-DAPClientForJAVA >> initialize [
+SindarinDAPClientForJAVA >> initialize [
 
 	super initialize.
 	adapterID := 'java'.

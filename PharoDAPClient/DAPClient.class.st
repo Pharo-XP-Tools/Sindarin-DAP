@@ -1,3 +1,8 @@
+"
+I am an abstract class to define Debugging Adapter Protocols. 
+
+I setup the communication with adapters.
+"
 Class {
 	#name : 'DAPClient',
 	#superclass : 'Object',

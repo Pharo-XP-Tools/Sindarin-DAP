@@ -1,13 +1,16 @@
+"
+I am a Debugging Adapter Protocol to deal with Python adapaters.
+"
 Class {
-	#name : 'DAPClientForPY',
+	#name : 'SindarinDAPClientForPython',
 	#superclass : 'SindarinDAPClient',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'initialization' }
-DAPClientForPY >> attachArguments [
+SindarinDAPClientForPython >> attachArguments [
 
 	^ {
 		  ('name' -> 'Attach to Python').
@@ -21,7 +24,7 @@ DAPClientForPY >> attachArguments [
 ]
 
 { #category : 'initialization' }
-DAPClientForPY >> initialize [
+SindarinDAPClientForPython >> initialize [
 
 	super initialize.
 
@@ -30,7 +33,7 @@ DAPClientForPY >> initialize [
 ]
 
 { #category : 'stack access' }
-DAPClientForPY >> variablesForObject: aVariableName inStackFrame: frameId [
+SindarinDAPClientForPython >> variablesForObject: aVariableName inStackFrame: frameId [
 
 	| specialVariablesReference |
 	specialVariablesReference := (super

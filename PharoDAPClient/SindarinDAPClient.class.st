@@ -1,3 +1,8 @@
+"
+I am an abstract class to define Debugging Adapter Protocols with Sindarin functionnalities. 
+
+My subclasses specify how to deal with a specific programming langage. 
+"
 Class {
 	#name : 'SindarinDAPClient',
 	#superclass : 'DAPClient',

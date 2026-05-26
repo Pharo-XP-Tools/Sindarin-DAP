@@ -4,9 +4,9 @@ Backend for JavaScript, using JavaScript synthax to answer DAP api-calls
 Class {
 	#name : 'DAPBackendJS',
 	#superclass : 'DAPBackend',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }

@@ -1,16 +1,19 @@
+"
+I am a Debugging Adapter Protocol to deal with JavaScript adapaters.
+"
 Class {
-	#name : 'DAPClientForJS',
+	#name : 'SindarinDAPClientForJS',
 	#superclass : 'SindarinDAPClient',
 	#instVars : [
 		'child'
 	],
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
-DAPClientForJS >> attachArguments [
+SindarinDAPClientForJS >> attachArguments [
 
 	^ {
 		  ('name' -> 'attach pharo script.js').
@@ -23,13 +26,13 @@ DAPClientForJS >> attachArguments [
 ]
 
 { #category : 'accessing' }
-DAPClientForJS >> child [
+SindarinDAPClientForJS >> child [
 
 	^ child
 ]
 
 { #category : 'registry' }
-DAPClientForJS >> dapRegistryAt: keyAsString put: valueAsString [
+SindarinDAPClientForJS >> dapRegistryAt: keyAsString put: valueAsString [
 
 	self
 		stackTrace: (DAPStackTraceArguments new threadId: self mainThreadId)
@@ -42,14 +45,14 @@ DAPClientForJS >> dapRegistryAt: keyAsString put: valueAsString [
 ]
 
 { #category : 'handle request' }
-DAPClientForJS >> handleStartDebuggingRequest: aStartDebuggingRequest [
+SindarinDAPClientForJS >> handleStartDebuggingRequest: aStartDebuggingRequest [
 
 	^ DAPClientForJSStartDebug new attachOtherArguments:
 		  (aStartDebuggingRequest at: 'arguments' at: 'configuration')
 ]
 
 { #category : 'initialization' }
-DAPClientForJS >> initialize [
+SindarinDAPClientForJS >> initialize [
 
 	super initialize.
 
@@ -62,7 +65,7 @@ DAPClientForJS >> initialize [
 ]
 
 { #category : 'registry' }
-DAPClientForJS >> initializeDapRegistry [
+SindarinDAPClientForJS >> initializeDapRegistry [
 
 	self
 		stackTrace: (DAPStackTraceArguments new threadId: self mainThreadId)

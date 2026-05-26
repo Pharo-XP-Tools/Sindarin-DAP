@@ -1,12 +1,12 @@
 Class {
 	#name : 'DAPClientForJSStartDebug',
-	#superclass : 'DAPClientForJS',
+	#superclass : 'SindarinDAPClientForJS',
 	#instVars : [
 		'attachOtherArguments'
 	],
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
