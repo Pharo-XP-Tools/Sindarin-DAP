@@ -17,10 +17,11 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-SindarinDAPClient class >> buildClientOnPort: aPort withBreakpointOnFile: aFileReference onLine: anInteger [
+SindarinDAPClient class >> buildClientOnHost: anHost onPort: aPort withBreakpointOnFile: aFileReference onLine: anInteger [
 
 	^ self new
 		  port: aPort;
+		  host: anHost;
 		  breakpointOnFile: aFileReference line: anInteger;
 		  startSession
 ]

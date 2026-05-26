@@ -10,26 +10,26 @@ Class {
 }
 
 { #category : 'initialization' }
+SindarinDAPClientForPython >> attachArguments [
+
+	^ {
+		  ('name' -> 'Attach to Python').
+		  ('type' -> 'python').
+		  ('connect' -> {
+			   ('host' -> host).
+			   ('port' -> port) } asDictionary).
+		  ('redirectOutput' -> true).
+		  ('showReturnValue' -> true).
+		  ('justMyCode' -> false) } asDictionary
+]
+
+{ #category : 'initialization' }
 SindarinDAPClientForPython >> initialize [
 
 	super initialize.
 
 	adapterID := 'python'.
 	backend := DAPBackendPY new
-]
-
-{ #category : 'initialization' }
-SindarinDAPClientForPython >> setAttachArguments [
-
-	^ {
-		  ('name' -> 'Attach to Python').
-		  ('type' -> 'python').
-		  ('connect' -> {
-			   ('host' -> 'localhost').
-			   ('port' -> 5678) } asDictionary).
-		  ('redirectOutput' -> true).
-		  ('showReturnValue' -> true).
-		  ('justMyCode' -> false) } asDictionary
 ]
 
 { #category : 'stack access' }

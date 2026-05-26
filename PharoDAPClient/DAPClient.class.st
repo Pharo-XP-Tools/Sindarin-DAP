@@ -15,7 +15,6 @@ Class {
 		'responseHandlers',
 		'requestHandlers',
 		'dapHistory',
-		'attachArguments',
 		'adapterID',
 		'host',
 		'breakpoints',
@@ -47,7 +46,7 @@ DAPClient >> adapterSupport: aCapabilityName [
 { #category : 'requests' }
 DAPClient >> attach [
 
-	self attach: attachArguments onResponse: [ :resp | ]
+	self attach: self attachArguments onResponse: [ :resp | ]
 ]
 
 { #category : 'requests' }
@@ -56,6 +55,12 @@ DAPClient >> attach: aListOfAttachArguments onResponse: aBlock [
 	| request |
 	request := DAPAttachRequest withArguments: aListOfAttachArguments.
 	self sendRequest: request onResponse: aBlock 
+]
+
+{ #category : 'requests' }
+DAPClient >> attachArguments [ 
+
+	self subclassResponsibility 
 ]
 
 { #category : 'accessing' }
@@ -291,11 +296,8 @@ DAPClient >> initialize [
 	eventHandlers := Dictionary new.
 	requestHandlers := Dictionary new.
 	dapHistory := DAPHistory new.
-	host := 'localhost'.
 	breakpoints := Dictionary new.
-	functionBreakpoints := OrderedCollection new.
-
-	attachArguments := self setAttachArguments
+	functionBreakpoints := OrderedCollection new
 ]
 
 { #category : 'requests' }
@@ -445,12 +447,6 @@ DAPClient >> sendRequest: aDAPRequest onResponse: callBackBlock [
 	socket nextPutAll: header asByteArray.
 	socket nextPutAll: bytes.
 	socket flush
-]
-
-{ #category : 'requests' }
-DAPClient >> setAttachArguments [ 
-
-	self subclassResponsibility 
 ]
 
 { #category : 'private' }
