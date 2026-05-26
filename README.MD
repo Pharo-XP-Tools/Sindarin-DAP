@@ -98,7 +98,7 @@ client := ClientDAPPresenter newWithClient:
 client open.
 ```
 
-Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the breakpoint should be placed.
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myPythonFile.py` the file `aLineNumber` the line on which the first breakpoint should be placed.
 
 ## JavaScript (Node.js)
 
@@ -282,4 +282,4 @@ client := ClientDAPPresenter newWithClient: SindarinDAPClientForJava new.
 client open.
 ```
 
-Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myJavaFile.jar` the file `aLineNumber` the line on which the breakpoint should be placed.
+Where `anHost` is the host and `aPort` the port on which debugPy is deployed, `myJavaFile.jar` the file `aLineNumber` the line on which the first breakpoint should be placed.
