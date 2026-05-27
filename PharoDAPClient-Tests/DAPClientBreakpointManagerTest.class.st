@@ -18,10 +18,10 @@ DAPClientBreakpointManagerTest >> setUp [
 	bpManger := DAPClientBreakpointManager new.
 
 	evaluatorTrue := Mock new.
-	(evaluatorTrue stub evaluate: Any frameId: Any) willReturn: true.
+	(evaluatorTrue stub evaluateBoolean: Any frameId: Any) willReturn: true.
 
 	evaluatorFalse := Mock new.
-	(evaluatorFalse stub evaluate: Any frameId: Any) willReturn: false
+	(evaluatorFalse stub evaluateBoolean: Any frameId: Any) willReturn: false
 ]
 
 { #category : 'tests' }
