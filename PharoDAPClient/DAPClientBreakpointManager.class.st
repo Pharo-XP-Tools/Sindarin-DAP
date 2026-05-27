@@ -1,5 +1,8 @@
 "
 I am a breakpoint manager used by DAPClient to add breakpoint during a debugging session.
+
+Indeed, natively adapters do not provide a way to just add a breakpoint: you have to set every breakpoint including breakpoints already set. 
+So this object allow us to have an easier api for breakpoint addition.
 "
 Class {
 	#name : 'DAPClientBreakpointManager',

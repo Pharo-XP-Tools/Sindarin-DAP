@@ -1,3 +1,8 @@
+"
+I am a Strategy (desing pattern) for the ""Continue"" action. 
+
+My subclasses implement various algorithms to do a ""Continue"" action.
+"
 Class {
 	#name : 'AbstractContinueStrategy',
 	#superclass : 'Object',

@@ -1,3 +1,6 @@
+"
+I am the common strategy to do a ""Continue"" action which simply send the ""Continue"" request to the adapter.
+"
 Class {
 	#name : 'DebugContinueStrategy',
 	#superclass : 'AbstractContinueStrategy',
