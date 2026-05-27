@@ -15,18 +15,15 @@ Metacello new
 	load
 ```
 
+## Usage
+
+### Build a DAP client
+
+### Build a Sindarin DAP Client
+
+
+
 ## Architecture
-
-### `DAPClient`
-
-`DAPClient` is the base class responsible for:
-- Managing the connection to the DAP server
-- Sending messages on the main thread
-- Receiving responses on a separate thread
-
-It also implements a callback mechanism to handle:
-- Responses to specific requests
-- Incoming requests and events from the DAP server
 
 
 ### `SindarinDAPClient`
@@ -45,26 +42,8 @@ Since the client may need to store data inside the debuggee, and this behavior d
 These require DAP capabilities such as `supportSetExpressions` or `supportSetVariables`.
 
 
-### `DAPClientBuilder`
-
-`DAPClientBuilder` is the way to configure and initialize a DAP client.
-
-It handles:
-- The handshake with the DAP server
-- Sending initialization data at the correct time
 
 See `ExampleOfSindarinDAP>>#getSindarinDAPClientForALangage` methods for usage.
-
-
-### `ClientDAPPresenter`
-
-`ClientDAPPresenter` is a UI tool that displays all:
-- Requests
-- Responses
-- Events
-
-that go through the client.
-
 
 ## Languages configuration 
 
