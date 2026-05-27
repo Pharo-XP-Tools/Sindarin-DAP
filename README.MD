@@ -46,13 +46,13 @@ These require DAP capabilities such as `supportSetExpressions` or `supportSetVar
 
 ### `DAPClientBuilder`
 
-`DAPClientBuilder` is the recommended way to configure and initialize a DAP client.
+`DAPClientBuilder` is the way to configure and initialize a DAP client.
 
 It handles:
 - The handshake with the DAP server
 - Sending initialization data at the correct time
 
-See the `Examples` `initialize` methods for usage.
+See `ExampleOfSindarinDAP>>#getSindarinDAPClientForALangage` methods for usage.
 
 
 ### `ClientDAPPresenter`
@@ -97,35 +97,15 @@ python -m debugpy --listen 5678 --wait-for-client py/script.py
 ```
 
 ### Client Configuration (Pharo)
-The DAP client is configured via `DAPClientForPY`.
-You can adapt the following example to your setup:
-``` smalltalk
-	DAPClientBuilder new
-		client: self;
-		port: 5678;
-		adapterID: 'python';
-		attachArguments: self attachArguments;
-		breakpoint: '/path/to/your/script.py' line: 8;
-		functionBreakpoint: 'toto' condition: 'True';
-		startClientSession
 
-attachArguments
-	^ {
-		  ('name' -> 'Attach to Python').
-		  ('type' -> 'python').
-		  ('connect' -> {
-			   ('host' -> 'localhost').
-			   ('port' -> 5678) } asDictionary).
-		  ('redirectOutput' -> true).
-		  ('showReturnValue' -> true) } asDictionary
-```
+You can get an example of configuration with `ExampleOfSindarinDAP>>#getSindarinDAPClientForPython`.
 
 ### Starting the Debugging Session
 
 - Start the `debugpy` adapter (see above)
 - In a Pharo Playground, run:
 ``` smalltalk
-client := ClientDAPPresenter newWithClient: DAPClientForPY new.
+client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForPython.
 client open.
 ```
 
