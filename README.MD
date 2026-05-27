@@ -1,12 +1,13 @@
-# sindarin-dap
+# Sindarin-DAP
 
-`sindarin-dap` is an implementation of a Debug Adapter Protocol (DAP) client. It relies on the structures and types provided by [Pharo-LanguageServer](https://github.com/FlavienVolant/Pharo-LanguageServer/tree/v5).
+`Sindarin-DAP` is an implementation of a Debug Adapter Protocol (DAP) client. It relies on the structures and types provided by [Pharo-LanguageServer](https://github.com/Pharo-XP-Tools/Pharo-LanguageServer/tree/DAP-Tools).
 
-The main goal of this project is to map Sindarin commands to their DAP equivalents, allowing the debugger to be controlled through Sindarin scripts.
+The goal of this project is to map Sindarin commands with their DAP equivalents, allowing the debugger to be controlled through Sindarin scripts.
 
 The client currently works exclusively over socket connections.
 
 ## Installation
+
 ``` smalltalk
 Metacello new
 	baseline: 'PharoDAPClient';
@@ -65,7 +66,7 @@ See `ExampleOfSindarinDAP>>#getSindarinDAPClientForALangage` methods for usage.
 that go through the client.
 
 
-## Supported Languages
+## Languages configuration 
 
 The client currently supports:
 
