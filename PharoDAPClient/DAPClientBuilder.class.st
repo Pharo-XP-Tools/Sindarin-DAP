@@ -1,3 +1,15 @@
+"
+I am a builder for DAPClient and SindarinDAPClient objects. 
+
+In order to build such an object, you can use these methods: 
+
+- `port:` to specify the port 
+- `host:` to specify the host (default is 'localhost')
+- `client:` which can be an instance of DAPClient or SindarinDAPClient (default is 'DAPClient') 
+- `attachArguments: aDictionary` to specify the attachArguments 
+- `breakpoint: aFileReference line: anInteger` to setup a breakpoint at session initialization
+- `functionBreakpoint:` to setup a functionBreakpoint at session initialization
+"
 Class {
 	#name : 'DAPClientBuilder',
 	#superclass : 'Object',
@@ -11,9 +23,9 @@ Class {
 		'attachArguments',
 		'backend'
 	],
-	#category : 'PharoDAPClient-Builders',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Builders'
+	#tag : 'Model'
 }
 
 { #category : 'instance creation' }

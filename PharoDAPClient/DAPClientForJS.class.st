@@ -86,6 +86,6 @@ DAPClientForJS >> startSession [
 		breakpoint:
 			'/Users/flavienvolant/Documents/sindarin-dap/js/script.js'
 		line: 1;
-		backend: DAPBackendJS new;
+		backend: DAPBackendJavaScript new;
 		startClientSession
 ]

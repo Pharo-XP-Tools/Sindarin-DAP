@@ -1,13 +1,18 @@
+"
+I am a backend for client connected to a Python adapter. 
+
+I provide methods to do specific request with a Python adapter. 
+"
 Class {
-	#name : 'DAPBackendPY',
+	#name : 'DAPBackendPython',
 	#superclass : 'DAPBackend',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
-DAPBackendPY >> constructorsOf: classExpr [
+DAPBackendPython >> constructorsOf: classExpr [
 	"Return a collection of string corresponding to the full name of the constructors of classExpr. 
 	Names are send to function breakpoint name"
 
@@ -15,25 +20,25 @@ DAPBackendPY >> constructorsOf: classExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> equalityExpressionLeft: leftExpr right: rightExpr [
+DAPBackendPython >> equalityExpressionLeft: leftExpr right: rightExpr [
 
 	^ leftExpr , ' == ' , rightExpr 
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> expressionKey: expr instanceOf: classExpr [
+DAPBackendPython >> expressionKey: expr instanceOf: classExpr [
 
 	^ 'isinstance(' , expr , ',' , classExpr , ')'
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> idExpressionFor: objExpr [
+DAPBackendPython >> idExpressionFor: objExpr [
 
 	^ objExpr 
 ]
 
 { #category : 'initialization' }
-DAPBackendPY >> initializeRegistry [
+DAPBackendPython >> initializeRegistry [
 
 	clientDAP
 		stackTrace:
@@ -46,13 +51,13 @@ DAPBackendPY >> initializeRegistry [
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> instanceName [
+DAPBackendPython >> instanceName [
 
 	^ 'self'
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> methodsOf: objExpr [
+DAPBackendPython >> methodsOf: objExpr [
 	"Return a collection of string corresponding to the full name of the methods of objExpr. 
 	Names are send to function breakpoint name"
 
@@ -66,14 +71,14 @@ DAPBackendPY >> methodsOf: objExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> readExpressionForKey: aString [
+DAPBackendPython >> readExpressionForKey: aString [
 	"return ... aString is the key"
 
 	^ '__import__("builtins").__dap_registry__.get("' , aString , '")'
 ]
 
 { #category : 'accessing' }
-DAPBackendPY >> store: aString forExpression: objExpr [
+DAPBackendPython >> store: aString forExpression: objExpr [
 
 	clientDAP
 		stackTrace:

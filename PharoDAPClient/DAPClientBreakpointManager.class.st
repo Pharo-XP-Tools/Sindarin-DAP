@@ -1,3 +1,6 @@
+"
+I am a breakpoint manager used by DAPClient to add breakpoint during a debugging session.
+"
 Class {
 	#name : 'DAPClientBreakpointManager',
 	#superclass : 'Object',

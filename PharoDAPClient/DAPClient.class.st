@@ -1,3 +1,8 @@
+"
+I am a client which is responsible of the communication with an adapter. So I am sending and receiving messages with it. 
+
+To build me, you have to use an instance of DAPClientBuilder.
+"
 Class {
 	#name : 'DAPClient',
 	#superclass : 'Object',
