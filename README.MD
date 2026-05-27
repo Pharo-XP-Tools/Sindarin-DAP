@@ -21,30 +21,6 @@ Metacello new
 
 ### Build a Sindarin DAP Client
 
-
-
-## Architecture
-
-
-### `SindarinDAPClient`
-
-`SindarinDAPClient` is the main entry point of the project.
-
-It extends `DAPClient` and provides an implementation of Sindarin commands as DAP messages.
-
-Unlike `DAPClient`, this client is designed to behave synchronously by waiting for responses. See:
-- `handleAsyncResponse: anAction returning: key`
-
-Since the client may need to store data inside the debuggee, and this behavior depends on the target language, the following methods are left as subclass responsibilities:
-- `dapRegistryAt: keyAsString put: valueAsString`
-- `initializeDapRegistry`
-
-These require DAP capabilities such as `supportSetExpressions` or `supportSetVariables`.
-
-
-
-See `ExampleOfSindarinDAP>>#getSindarinDAPClientForALangage` methods for usage.
-
 ## Languages configuration 
 
 The client currently supports:
@@ -55,12 +31,11 @@ The client currently supports:
 
 Refer to the corresponding help/documentation for each language to learn how to set up your environment and start debugging.
 
-
-## Python
+### Python
 
 This client uses [`debugpy`](https://github.com/microsoft/debugpy) as the DAP adapter.
 
-### Installation
+#### Installation
 
 Install `debugpy` using pip:
 
@@ -68,7 +43,7 @@ Install `debugpy` using pip:
 pip install debugpy
 ```
 
-### Starting the DAP Adapter
+#### Starting the DAP Adapter
 
 Run your Python script with `debugpy` and wait for the client to attach:
 
@@ -76,11 +51,11 @@ Run your Python script with `debugpy` and wait for the client to attach:
 python -m debugpy --listen 5678 --wait-for-client py/script.py
 ```
 
-### Client Configuration (Pharo)
+#### Client Configuration (Pharo)
 
 You can get an example of configuration with `ExampleOfSindarinDAP>>#getSindarinDAPClientForPython`.
 
-### Starting the Debugging Session
+#### Starting the Debugging Session
 
 - Start the `debugpy` adapter (see above)
 - In a Pharo Playground, run:
@@ -89,18 +64,18 @@ client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPC
 client open.
 ```
 
-## JavaScript (Node.js)
+### JavaScript (Node.js)
 
 This client uses the Microsoft **vscode-js-debug** adapter.
 
 
-### Requirements
+#### Requirements
 
 - Node.js
 - [`vscode-js-debug`](https://github.com/microsoft/vscode-js-debug) (tested with `v1.112.0`)
 
 
-### Getting the JavaScript Debug Adapter
+#### Getting the JavaScript Debug Adapter
 
 Download a release from:
 
@@ -111,8 +86,7 @@ Extract it, then locate the DAP server entry point:
 js-debug/src/dapDebugServer.js
 ```
 
-
-### Starting the Target Script
+#### Starting the Target Script
 
 Run your Node.js script in debug mode:
 
@@ -122,8 +96,7 @@ node --inspect-brk=0.0.0.0:9229 js/script.js
 
 This starts Node with the inspector protocol enabled and waits for a debugger to attach.
 
-
-### Starting the DAP Adapter
+#### Starting the DAP Adapter
 
 Launch the debug adapter server:
 ```
@@ -131,8 +104,7 @@ node js-debug/src/dapDebugServer.js 5678
 ```
 The adapter will listen for DAP connections on port `5678`.
 
-
-### Client Configuration (Pharo)
+#### Client Configuration (Pharo)
 
 This adapter require the client to support `startDebuggingRequest`. Therefore, a second DAP client (`DAPClientForJSStartDebug`) is created with extended `attachArguments`.
 
@@ -160,7 +132,7 @@ handleStartDebuggingRequest: aStartDebuggingRequest
 	(ClientDAPPresenter newWithClient: childClient) open
 ```
 
-### Starting a Session
+#### Starting a Session
 
 ``` smalltalk
 startSession
@@ -184,7 +156,7 @@ attachArguments
 	} asDictionary
 ```
 
-### Starting the Debugging Session
+#### Starting the Debugging Session
 
 - Start your Node.js script with --inspect-brk
 - Start the vscode-js-debug adapter
@@ -193,19 +165,19 @@ attachArguments
 client := DAPClientForJS new startSession.
 ```
 
-## Java
+### Java
 
 The Java client relies on the [java-debug](https://github.com/microsoft/java-debug) adapter from Microsoft.  
 This adapter is designed to work as a plugin for the Java Language Server ([eclipse.jdt.ls](https://github.com/eclipse-jdtls/eclipse.jdt.ls)).
 
 
-### Requirements
+#### Requirements
 
 - `eclipse.jdt.ls` (Java Language Server)
 - `java-debug` plugin
 
 
-### Getting the Java Debug Adapter
+#### Getting the Java Debug Adapter
 
 One simple way to obtain the adapter is to install the VS Code extension:
 
@@ -221,7 +193,7 @@ Look for a file like:
 com.microsoft.java.debug.plugin-<version>.jar
 ```
 
-### Preparing the Target JVM
+#### Preparing the Target JVM
 
 The Java program must be started in debug mode using **JDWP**, so the debugger can attach to it:
 
@@ -232,7 +204,7 @@ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 \
 ```
 This starts the JVM in debug mode and listens on port 5005.
 
-### Starting the LSP Server with java-debug
+#### Starting the LSP Server with java-debug
 
 To use `java-debug`, you must start `eclipse.jdt.ls` with the debug plugin included in the `bundles` initialization option:
 
@@ -284,7 +256,7 @@ attachArguments
 		  ('projectName' -> 'java') } asDictionary
 ```
 
-### Starting the Debugging Session
+#### Starting the Debugging Session
 - Start your Java program with JDWP enabled
 - Start `eclipse.jdt.ls` with the `java-debug` plugin
 - Send the `vscode.java.startDebugSession` command via your LSP client
