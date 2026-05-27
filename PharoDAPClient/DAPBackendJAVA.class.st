@@ -1,13 +1,18 @@
+"
+I am a backend for client connected to a Java adapter.
+
+I provide methods to do specific request with a Java adapter.
+"
 Class {
-	#name : 'DAPBackendJAVA',
+	#name : 'DAPBackendJava',
 	#superclass : 'DAPBackend',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
-DAPBackendJAVA >> constructorsOf: classExpr [
+DAPBackendJava >> constructorsOf: classExpr [
 	"Return a collection of string corresponding to the full name of the constructors of classExpr. 
 	Names are send to function breakpoint name"
 
@@ -17,25 +22,25 @@ DAPBackendJAVA >> constructorsOf: classExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> equalityExpressionLeft: leftExpr right: rightExpr [
+DAPBackendJava >> equalityExpressionLeft: leftExpr right: rightExpr [
 
 	^ leftExpr , '.equals(' , rightExpr , ')'
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> expressionKey: varExpr instanceOf: classExpr [
+DAPBackendJava >> expressionKey: varExpr instanceOf: classExpr [
 
 	^ varExpr , ' instanceof ' , classExpr
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> idExpressionFor: expr [
+DAPBackendJava >> idExpressionFor: expr [
 
 	^ 'Integer.toString(System.identityHashCode(' , expr , '))'
 ]
 
 { #category : 'initialization' }
-DAPBackendJAVA >> initializeRegistry [
+DAPBackendJava >> initializeRegistry [
 	" In Java, there is no need to initialize a global registry.
 	The java.lang.System object already exists and is globally accessible in the JVM.
 
@@ -47,13 +52,13 @@ DAPBackendJAVA >> initializeRegistry [
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> instanceName [
+DAPBackendJava >> instanceName [
 
 	^ 'this'
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> methodsOf: objExpr [
+DAPBackendJava >> methodsOf: objExpr [
 	"Return a collection of string corresponding to the full name of the methods of objExpr. 
 	Names are send to function breakpoint name"
 
@@ -75,14 +80,14 @@ DAPBackendJAVA >> methodsOf: objExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> readExpressionForKey: aString [
+DAPBackendJava >> readExpressionForKey: aString [
 	"return ... aString is the key"
 
 	^ 'System.getProperty("' , aString , '")'
 ]
 
 { #category : 'accessing' }
-DAPBackendJAVA >> store: aString forExpression: objExpr [
+DAPBackendJava >> store: aString forExpression: objExpr [
 
 	clientDAP
 		stackTrace:

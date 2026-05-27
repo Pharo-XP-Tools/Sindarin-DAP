@@ -1,3 +1,6 @@
+"
+I am a presenter to do actions during a debugging session with a DAPClient. 
+"
 Class {
 	#name : 'ClientDAPPresenter',
 	#superclass : 'SpPresenter',
