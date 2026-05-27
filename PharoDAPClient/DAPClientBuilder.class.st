@@ -16,6 +16,16 @@ Class {
 	#tag : 'Builders'
 }
 
+{ #category : 'instance creation' }
+DAPClientBuilder class >> newSindarinClient [
+
+	| builder |
+	builder := self new.
+	builder client: SindarinDAPClient new.
+
+	^ builder
+]
+
 { #category : 'accessing' }
 DAPClientBuilder >> adapterID: aString [
 
