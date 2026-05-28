@@ -17,23 +17,95 @@ Metacello new
 
 ## Usage
 
+To start working with DAP and adapters, you will need a DAPClient object and connect it to the provided User Interface `ClientDAPPresenter`. 
+
+You must use the builder `DAPClientBuilder` in order to build clients. 
+
 ### Build a DAP client
+
+A basic DAP Client only provides functionalities from the DAP protocol. To build a DAP Client, you can use the builder with this type of arguments:
+
+```smalltalk
+
+myDAPClient := DAPClientBuilder new
+        host: aHost;
+        port: aPort;
+        adapterID: 'myAdapterId';
+        attachArguments: aDictionaryOfAttachArguments;
+        breakpoint: aFilePath;
+        line: aLineNumber;
+        backend: DAPBackendMyLanguage new;
+        startClientSession
+
+``` 
+
+Where: 
+- `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
+- `'myAdapterId'` is the id of the adapter; 
+- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
+- `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
 
 ### Build a Sindarin DAP Client
 
-## Languages configuration 
+A Sindarin DAP Client provides functionalities from the DAP protocol and other functionalities (inspired by the Sindarin project) such as: get all calls to a method, get all instantiations of a class, ... 
+To build a Sindarin DAP Client, you can use the builder this way:
 
-The client currently supports:
+```smalltalk
 
-- Python -> `DAPClientForPY`
-- Java -> `DAPClientForJAVA`
-- JavaScript -> `DAPClientForJS`
+myDAPClient := DAPClientBuilder newSindarinClient
+        host: aHost;
+        port: aPort;
+        adapterID: 'myAdapterId';
+        attachArguments: aDictionaryOfAttachArguments;
+        breakpoint: aFilePath;
+        line: aLineNumber;
+        backend: DAPBackendMyLanguage new;
+        startClientSession
 
-Refer to the corresponding help/documentation for each language to learn how to set up your environment and start debugging.
+``` 
+
+Where: 
+- `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
+- `'myAdapterId'` is the id of the adapter; 
+- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
+- `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
+
+You can find some examples of Sindarin DAP Clients in `ExampleOfSindarinDAP`. 
+
+### Backend
+
+Currently, there are some backends provided (child classes of `DAPBackend`):
+
+- Python -> `DAPBackendPython`
+- Java -> `DAPBackendJava`
+- JavaScript -> `DAPBackendJavaScript`
+
+### Launch the User Interface (UI)
+
+Once you have built a DAP Client, you can launch the UI by doing:
+
+```smalltalk
+
+client := ClientDAPPresenter newWithClient: myDAPClient.
+client open.
+
+```
+
+Where `myDAPClient` is a DAP Client already built. 
+
+Then the UI gives access to a lot of debugger functionalities such as: stepIn, stepOut, continue, set breakpoints, ...
+
+## Adapters configuration 
+
+Here, we describe how to setup some adapters to link with your DAP Client. 
+
+Note that the list provided here is not exhaustive and you can use your favorite adapter as long as it support DAP protocol. 
 
 ### Python
 
-This client uses [`debugpy`](https://github.com/microsoft/debugpy) as the DAP adapter.
+For python, we suggest to use [`debugpy`](https://github.com/microsoft/debugpy) as adapter.
 
 #### Installation
 
@@ -48,21 +120,13 @@ pip install debugpy
 Run your Python script with `debugpy` and wait for the client to attach:
 
 ```bash
-python -m debugpy --listen 5678 --wait-for-client py/script.py
+python -m debugpy --listen 5678 --wait-for-client myPythonScript.py
 ```
 
-#### Client Configuration (Pharo)
+You can choose an other port than 5678 but it is the common one for debugpy.
 
-You can get an example of configuration with `ExampleOfSindarinDAP>>#getSindarinDAPClientForPython`.
 
-#### Starting the Debugging Session
 
-- Start the `debugpy` adapter (see above)
-- In a Pharo Playground, run:
-``` smalltalk
-client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForPython.
-client open.
-```
 
 ### JavaScript (Node.js)
 
@@ -266,3 +330,18 @@ attachArguments
 client := ClientDAPPresenter newWithClient: DAPClientForJAVA new.
 client open.
 ```
+
+## Examples
+
+### Python client example
+
+You can run an example of Sindarin DAP Client by:
+
+- Starting the `debubpy` adapter in the working directory with `python -m debugpy --listen 5678 --wait-for-client scriptExamples/pythonScript.py`
+- In a Pharo Playground, run:
+``` smalltalk
+client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForPython.
+client open.
+```
+
+Then you will have access to the UI and you can play with it to discover how it works.
