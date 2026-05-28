@@ -1,3 +1,6 @@
+"
+I am a specialization of DAPClient with Sindarin functionalities
+"
 Class {
 	#name : 'SindarinDAPClient',
 	#superclass : 'DAPClient',

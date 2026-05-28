@@ -1,13 +1,18 @@
+"
+I am a backend for client connected to a JavaScript adapter.
+
+I provide methods to do specific request with a JavaScript adapter.
+"
 Class {
-	#name : 'DAPBackendJS',
+	#name : 'DAPBackendJavaScript',
 	#superclass : 'DAPBackend',
-	#category : 'PharoDAPClient-Examples',
+	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
-	#tag : 'Examples'
+	#tag : 'Model'
 }
 
 { #category : 'accessing' }
-DAPBackendJS >> constructorsOf: classExpr [
+DAPBackendJavaScript >> constructorsOf: classExpr [
 	"Return a collection of string corresponding to the full name of the constructors of classExpr. 
 	Names are send to function breakpoint name"
 
@@ -15,26 +20,26 @@ DAPBackendJS >> constructorsOf: classExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> equalityExpressionLeft: leftExpr right: rightExpr [
+DAPBackendJavaScript >> equalityExpressionLeft: leftExpr right: rightExpr [
 
 	^ leftExpr , ' === ' , rightExpr
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> expressionKey: varExpr instanceOf: classExpr [
+DAPBackendJavaScript >> expressionKey: varExpr instanceOf: classExpr [
 
 	^ varExpr , ' instanceof ' , classExpr
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> idExpressionFor: objExpr [
+DAPBackendJavaScript >> idExpressionFor: objExpr [
 	"^ aString"
 
 	^ objExpr 
 ]
 
 { #category : 'initialization' }
-DAPBackendJS >> initializeRegistry [
+DAPBackendJavaScript >> initializeRegistry [
 
 	clientDAP
 		stackTrace:
@@ -47,14 +52,14 @@ DAPBackendJS >> initializeRegistry [
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> instanceName [
+DAPBackendJavaScript >> instanceName [
 	"return this or self"
 
 	^ 'this'
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> methodsOf: objExpr [
+DAPBackendJavaScript >> methodsOf: objExpr [
 	"Return a collection of string corresponding to the full name of the methods of objExpr. 
 	Names are send to function breakpoint name"
 
@@ -62,14 +67,14 @@ DAPBackendJS >> methodsOf: objExpr [
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> readExpressionForKey: aString [
+DAPBackendJavaScript >> readExpressionForKey: aString [
 	"return ... aString is the key"
 
 	^ 'globalThis.__dap_registry__[' , aString , ']'
 ]
 
 { #category : 'accessing' }
-DAPBackendJS >> store: aString forExpression: objExpr [
+DAPBackendJavaScript >> store: aString forExpression: objExpr [
 
 	clientDAP
 		stackTrace:
