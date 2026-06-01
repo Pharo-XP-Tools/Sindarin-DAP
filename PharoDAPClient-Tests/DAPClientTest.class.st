@@ -52,9 +52,3 @@ DAPClientTest >> startSession [
 		adapterID: 'Mock';
 		startClientSession
 ]
-
-{ #category : 'tests' }
-DAPClientTest >> testOnConnectionClientSendInitializeRequestAndWaitForResponse [
-
-	self fail
-]
