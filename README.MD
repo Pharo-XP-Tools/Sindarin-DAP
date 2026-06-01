@@ -126,18 +126,77 @@ python -m debugpy --listen 5678 --wait-for-client myPythonScript.py
 You can choose an other port than 5678 but it is the common one for debugpy.
 
 
+### Java
+
+The Java client relies on the [java-debug](https://github.com/microsoft/java-debug) adapter from Microsoft.  
+This adapter is designed to work as a plugin for the Java Language Server ([eclipse.jdt.ls](https://github.com/eclipse-jdtls/eclipse.jdt.ls)).
+
+
+#### Requirements
+
+- `eclipse.jdt.ls` (Java Language Server)
+- `java-debug` plugin
+
+
+#### Getting the Java Debug Adapter
+
+One simple way to obtain the adapter is to install the VS Code extension:
+
+- **Debugger for Java (Microsoft)**
+
+After installation, you can find the required JAR in:
+```
+.vscode/extensions/vscjava.vscode-java-debug-<version>/server/
+```
+
+Look for a file like:
+```
+com.microsoft.java.debug.plugin-<version>.jar
+```
+
+#### Preparing the Target JVM
+
+The Java program must be started in debug mode using **JDWP**, so the debugger can attach to it:
+
+```bash
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 \
+  -cp target/classes \
+  example.Main
+```
+This starts the JVM in debug mode and listens on port 5005.
+
+#### Starting the LSP Server with java-debug
+
+To use `java-debug`, you must start `eclipse.jdt.ls` with the debug plugin included in the `bundles` initialization option:
+
+```json
+{
+  "initializationOptions": {
+    "bundles": [
+      "path/to/com.microsoft.java.debug.plugin-<version>.jar"
+    ]
+  }
+}
+```
+
+### Starting a Debug Session
+Once eclipse.jdt.ls is running, send the following command via your LSP client:
+``` json
+{
+  "command": "vscode.java.startDebugSession"
+}
+```
+The server will respond with a port number where the DAP adapter is listening.
 
 
 ### JavaScript (Node.js)
 
 This client uses the Microsoft **vscode-js-debug** adapter.
 
-
 #### Requirements
 
 - Node.js
 - [`vscode-js-debug`](https://github.com/microsoft/vscode-js-debug) (tested with `v1.112.0`)
-
 
 #### Getting the JavaScript Debug Adapter
 
@@ -229,108 +288,6 @@ attachArguments
 client := DAPClientForJS new startSession.
 ```
 
-### Java
-
-The Java client relies on the [java-debug](https://github.com/microsoft/java-debug) adapter from Microsoft.  
-This adapter is designed to work as a plugin for the Java Language Server ([eclipse.jdt.ls](https://github.com/eclipse-jdtls/eclipse.jdt.ls)).
-
-
-#### Requirements
-
-- `eclipse.jdt.ls` (Java Language Server)
-- `java-debug` plugin
-
-
-#### Getting the Java Debug Adapter
-
-One simple way to obtain the adapter is to install the VS Code extension:
-
-- **Debugger for Java (Microsoft)**
-
-After installation, you can find the required JAR in:
-```
-.vscode/extensions/vscjava.vscode-java-debug-<version>/server/
-```
-
-Look for a file like:
-```
-com.microsoft.java.debug.plugin-<version>.jar
-```
-
-#### Preparing the Target JVM
-
-The Java program must be started in debug mode using **JDWP**, so the debugger can attach to it:
-
-```bash
-java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 \
-  -cp target/classes \
-  example.Main
-```
-This starts the JVM in debug mode and listens on port 5005.
-
-#### Starting the LSP Server with java-debug
-
-To use `java-debug`, you must start `eclipse.jdt.ls` with the debug plugin included in the `bundles` initialization option:
-
-```json
-{
-  "initializationOptions": {
-    "bundles": [
-      "path/to/com.microsoft.java.debug.plugin-<version>.jar"
-    ]
-  }
-}
-```
-
-### Starting a Debug Session
-Once eclipse.jdt.ls is running, send the following command via your LSP client:
-``` json
-{
-  "command": "vscode.java.startDebugSession"
-}
-```
-The server will respond with a port number where the DAP adapter is listening.
-
-### Client Configuration (Pharo)
-Use `DAPClientForJAVA` and configure it with the port returned by the LSP server:
-``` smalltalk
-	DAPClientBuilder new
-		client: self;
-		port: 63461; "Replace with the returned port"
-		adapterID: 'java';
-		attachArguments: self attachArguments;
-		breakpoint:
-			'/path/to/your/project/src/main/java/example/Main.java'
-		line: 5;
-		breakpoint:
-			'/path/to/your/project/src/main/java/example/Main.java'
-		line: 9;
-		functionBreakpoint: 'example.Bar#toto'
-		condition:
-			'true';
-		startClientSession
-
-attachArguments
-
-	^ {
-		  ('name' -> 'Attach to Java').
-		  ('type' -> 'server').
-		  ('hostName' -> 'localhost').
-		  ('port' -> 5005).
-		  ('projectName' -> 'java') } asDictionary
-```
-
-#### Starting the Debugging Session
-- Start your Java program with JDWP enabled
-- Start `eclipse.jdt.ls` with the `java-debug` plugin
-- Send the `vscode.java.startDebugSession` command via your LSP client
-- Retrieve the port from the response
-- In a Pharo Playground, run:
-``` smalltalk
-client := ClientDAPPresenter newWithClient: DAPClientForJAVA new.
-client open.
-```
-
 ## Examples
 
 ### Python client example
@@ -345,3 +302,21 @@ client open.
 ```
 
 Then you will have access to the UI and you can play with it to discover how it works.
+
+#### Java client example
+
+You can run an example of Sindarin DAP Client by:
+
+- Starting your Java program with JDWP enabled
+- Starting `eclipse.jdt.ls` with the `java-debug` plugin
+- Sending the `vscode.java.startDebugSession` command via your LSP client
+- Retrieving the port from the response
+- In a Pharo Playground, run:
+``` smalltalk
+client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForJava.
+client open.
+```
+
+#### JavaScript client example
+
+For the moment, the example is a work in progress but it will be updated soon.
