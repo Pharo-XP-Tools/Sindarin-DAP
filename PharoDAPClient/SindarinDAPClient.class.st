@@ -354,6 +354,15 @@ SindarinDAPClient >> stackFrames: threadId [
 ]
 
 { #category : 'stepping - steps' }
+SindarinDAPClient >> stepOut [
+
+	self handleAsyncRawResponse: [ :resp |
+			self
+				stepOut: (DAPStepOutArguments new threadId: self mainThreadId)
+				onResponse: resp ]
+]
+
+{ #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntil: aPredicate [
 	"aPredicate is expected to be a ByteString or a BlockClosure"
 
@@ -375,9 +384,7 @@ SindarinDAPClient >> stepUntilBlock: aBlock [
 	[ self isExecutionFinished or: [ aBlock value ] ] whileFalse: [
 			self handleAsyncRawResponse: [ :resp |
 					self
-						stepIn: (DAPStepInArguments new
-								 threadId: self mainThreadId;
-								 yourself)
+						stepIn: (DAPStepInArguments new threadId: self mainThreadId)
 						onResponse: resp ] ]
 ]
 
