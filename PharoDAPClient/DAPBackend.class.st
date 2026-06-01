@@ -1,3 +1,8 @@
+"
+I am an abstract class allowing to link a DAPClient with a specific langage and then have requests in addition of the native DAP one's.
+
+A DAPClient must have a DAPBackend to interact with an adapter.
+"
 Class {
 	#name : 'DAPBackend',
 	#superclass : 'Object',

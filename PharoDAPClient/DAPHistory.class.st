@@ -1,3 +1,6 @@
+"
+I am an object which keep in memory all events from/to a DAPClient. 
+"
 Class {
 	#name : 'DAPHistory',
 	#superclass : 'Object',

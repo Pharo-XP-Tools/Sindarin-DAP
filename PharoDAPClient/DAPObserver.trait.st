@@ -1,3 +1,6 @@
+"
+I am a Trait for all classes which need to be update when a message is sent to / comes from an adapter.
+"
 Trait {
 	#name : 'DAPObserver',
 	#category : 'PharoDAPClient-Model',
