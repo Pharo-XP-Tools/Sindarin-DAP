@@ -151,6 +151,12 @@ DAPClientBuilder >> initializeArguments [
 		  locale: 'en'
 ]
 
+{ #category : 'private' }
+DAPClientBuilder >> launchClient [
+
+	client launch: attachArguments
+]
+
 { #category : 'accessing' }
 DAPClientBuilder >> port: anNumber [
 
@@ -191,7 +197,7 @@ DAPClientBuilder >> startClientSession [
 			self setFunctionBreakpoints.
 			self configurationDone ].
 
-	self connectClient: [ :resp | self attachClient ].
+	self connectClient: [ :resp | self launchClient ].
 
 	(client respondsTo: #backend:) ifTrue: [ client backend: backend ].
 

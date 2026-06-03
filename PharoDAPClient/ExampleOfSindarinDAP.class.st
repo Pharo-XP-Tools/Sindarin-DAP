@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'utils' }
-ExampleOfSindarinDAP >> attachArgumentsForJavaExample [
+ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
 	"Returns the attach arguments for the Java client example"
 
 	^ {
@@ -22,26 +22,23 @@ ExampleOfSindarinDAP >> attachArgumentsForJavaExample [
 ]
 
 { #category : 'utils' }
-ExampleOfSindarinDAP >> attachArgumentsForPythonExample [
+ExampleOfSindarinDAP class >> attachArgumentsForPythonExample [
 	"Returns the attach arguments for the Python client example"
 
 	^ {
-		  ('name' -> 'Attach to Python').
-		  ('type' -> 'python').
-		  ('connect' -> {
-			   ('host' -> 'localhost').
-			   ('port' -> 5678) } asDictionary).
+		  ('program'
+		   ->
+		   '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/py/hello_world.py').
 		  ('redirectOutput' -> true).
 		  ('showReturnValue' -> true).
 		  ('justMyCode' -> false) } asDictionary
 ]
 
 { #category : 'api' }
-ExampleOfSindarinDAP >> getSindarinDAPClientForJava [
+ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 	"Returns a SindarinDAPClient for Java, the client returned is an example to see how it works"
 
-	^ DAPClientBuilder new
-		  client: SindarinDAPClient new;
+	^ DAPClientBuilder newSindarinClient
 		  port: 64894;
 		  adapterID: 'java';
 		  attachArguments: self attachArgumentsForJavaExample;
@@ -53,17 +50,16 @@ ExampleOfSindarinDAP >> getSindarinDAPClientForJava [
 ]
 
 { #category : 'api' }
-ExampleOfSindarinDAP >> getSindarinDAPClientForPython [
+ExampleOfSindarinDAP class >> getSindarinDAPClientForPython [
 	"Returns a SindarinDAPClient for Python, the client returned is an example to see how it works"
 
-	^ DAPClientBuilder new
-		  client: self;
+	^ DAPClientBuilder newSindarinClient
 		  port: 5678;
 		  adapterID: 'python';
 		  attachArguments: self attachArgumentsForPythonExample;
 		  breakpoint:
-			  '/Users/flavienvolant/Documents/sindarin-dap/py/script.py'
-		  line: 10;
+			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/py/hello_world.py'
+		  line: 3;
 		  backend: DAPBackendPython new;
 		  startClientSession
 ]
