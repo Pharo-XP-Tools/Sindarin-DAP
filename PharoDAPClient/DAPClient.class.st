@@ -9,7 +9,6 @@ Class {
 	#instVars : [
 		'socket',
 		'seq',
-		'buffer',
 		'listenerProcess',
 		'eventHandlers',
 		'responseHandlers',
@@ -58,9 +57,9 @@ DAPClient >> closeConnection [
 			socket close.
 			socket := nil ].
 
-	eventHandlers keysAndValuesRemove: [ :key :value | true ].
-	responseHandlers keysAndValuesRemove: [ :key :value | true ].
-	requestHandlers keysAndValuesRemove: [ :key :value | true ]
+	eventHandlers := Dictionary new.
+	responseHandlers := Dictionary new.
+	requestHandlers := Dictionary new
 ]
 
 { #category : 'requests' }
@@ -98,6 +97,12 @@ DAPClient >> continue: continueArguments onResponse: aBlock [
 DAPClient >> dapHistory [
 
 	^ dapHistory
+]
+
+{ #category : 'accessing' }
+DAPClient >> dapHistory: anObject [
+
+	dapHistory := anObject
 ]
 
 { #category : 'requests' }
@@ -139,6 +144,18 @@ DAPClient >> evaluate: evaluateArguments onResponse: aBlock [
 	| req |
 	req := DAPEvaluateRequest withArguments: evaluateArguments.
 	self sendRequest: req onResponse: aBlock 
+]
+
+{ #category : 'accessing' }
+DAPClient >> eventHandlers [
+
+	^ eventHandlers
+]
+
+{ #category : 'accessing' }
+DAPClient >> eventHandlers: anObject [
+
+	eventHandlers := anObject
 ]
 
 { #category : 'requests' }
@@ -235,7 +252,6 @@ DAPClient >> initialize [
 
 	super initialize.
 	seq := 1.
-	buffer := ByteArray new.
 	responseHandlers := Dictionary new.
 	eventHandlers := Dictionary new.
 	requestHandlers := Dictionary new.
@@ -270,6 +286,18 @@ DAPClient >> launch: launchArguments onResponse: aBlock [
 	| request |
 	request := DAPLaunchRequest withArguments: launchArguments.
 	self sendRequest: request onResponse: aBlock 
+]
+
+{ #category : 'accessing' }
+DAPClient >> listenerProcess [
+
+	^ listenerProcess
+]
+
+{ #category : 'accessing' }
+DAPClient >> listenerProcess: anObject [
+
+	listenerProcess := anObject
 ]
 
 { #category : 'accessing' }
@@ -329,6 +357,46 @@ DAPClient >> readMessageAsDict [
 	^ STONJSON fromString: body
 ]
 
+{ #category : 'accessing' }
+DAPClient >> requestHandlers [
+
+	^ requestHandlers
+]
+
+{ #category : 'accessing' }
+DAPClient >> requestHandlers: anObject [
+
+	requestHandlers := anObject
+]
+
+{ #category : 'communication' }
+DAPClient >> requestHandlersAt: aRequest put: aBlock [
+	"Add a way to answer aRequest with aBlock"
+
+	requestHandlers at: aRequest put: aBlock
+]
+
+{ #category : 'initialization' }
+DAPClient >> reset [
+	"Closes the connection and reset attributes"
+
+	self closeConnection.
+	dapHistory := DAPHistory new.
+	seq := 1
+]
+
+{ #category : 'accessing' }
+DAPClient >> responseHandlers [
+
+	^ responseHandlers
+]
+
+{ #category : 'accessing' }
+DAPClient >> responseHandlers: anObject [
+
+	responseHandlers := anObject
+]
+
 { #category : 'requests' }
 DAPClient >> scopes: scopesArguments [
 
@@ -368,6 +436,18 @@ DAPClient >> sendRequest: aDAPRequest onResponse: callBackBlock [
 	socket nextPutAll: header asByteArray.
 	socket nextPutAll: bytes.
 	socket flush
+]
+
+{ #category : 'accessing' }
+DAPClient >> seq [
+
+	^ seq
+]
+
+{ #category : 'accessing' }
+DAPClient >> seq: anObject [
+
+	seq := anObject
 ]
 
 { #category : 'requests' }
@@ -430,6 +510,18 @@ DAPClient >> setFunctionBreakpoints: setFunctionBreakpointsArguments onResponse:
 	request := DAPSetFunctionBreakpointsRequest withArguments:
 		           setFunctionBreakpointsArguments.
 	self sendRequest: request onResponse: aBlock 
+]
+
+{ #category : 'accessing' }
+DAPClient >> socket [
+
+	^ socket
+]
+
+{ #category : 'accessing' }
+DAPClient >> socket: anObject [
+
+	socket := anObject
 ]
 
 { #category : 'requests' }

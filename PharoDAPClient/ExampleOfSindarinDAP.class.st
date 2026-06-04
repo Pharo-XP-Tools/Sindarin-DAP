@@ -22,6 +22,20 @@ ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
 ]
 
 { #category : 'utils' }
+ExampleOfSindarinDAP class >> attachArgumentsForJavaScriptExample [
+	"Returns the attach arguments for the JavaScript client example"
+
+	^ {
+		  ('type' -> 'pwa-node').
+		  ('request' -> 'launch').
+		  ('skipFiles' -> { '<node_internals>/**' }).
+		  ('program'
+		   ->
+		   '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js').
+		  ('stopOnEntry' -> true) } asDictionary
+]
+
+{ #category : 'utils' }
 ExampleOfSindarinDAP class >> attachArgumentsForPythonExample [
 	"Returns the attach arguments for the Python client example"
 
@@ -46,6 +60,22 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 			  '/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java'
 		  line: 9;
 		  backend: DAPBackendJava new;
+		  startClientSession
+]
+
+{ #category : 'api' }
+ExampleOfSindarinDAP class >> getSindarinDAPClientForJavaScript [
+	"Returns a SindarinDAPClient for JavaScript, the client returned is an example to see how it works"
+
+	^ DAPClientBuilder newSindarinClient
+		  adapterID: 'node';
+		  port: 5678;
+		  attachArguments: self attachArgumentsForJavaScriptExample;
+		  breakpoint:
+			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js'
+		  line: 21;
+		  backend: DAPBackendJavaScript new;
+		  handleStartDebuggingRequest;
 		  startClientSession
 ]
 

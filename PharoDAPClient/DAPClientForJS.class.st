@@ -13,12 +13,11 @@ Class {
 DAPClientForJS >> attachArguments [
 
 	^ {
-		  ('name' -> 'attach pharo script.js').
 		  ('type' -> 'pwa-node').
-		  ('request' -> 'attach').
-		  ('address' -> 'localhost').
-		  ('port' -> '5005').
-		  ('continueOnAttach' -> true).
+		  ('request' -> 'launch').
+		  ('program'
+		   ->
+		   '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js').
 		  ('skipFiles' -> { '<node_internals>/**' }) } asDictionary
 ]
 
@@ -85,7 +84,7 @@ DAPClientForJS >> startSession [
 		attachArguments: self attachArguments;
 		breakpoint:
 			'/Users/flavienvolant/Documents/sindarin-dap/js/script.js'
-		line: 1;
+		line: 20;
 		backend: DAPBackendJavaScript new;
 		startClientSession
 ]

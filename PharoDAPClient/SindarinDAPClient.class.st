@@ -6,8 +6,7 @@ Class {
 	#superclass : 'DAPClient',
 	#instVars : [
 		'backend',
-		'breakpointManager',
-		'continueStrategy'
+		'breakpointManager'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -269,6 +268,14 @@ SindarinDAPClient >> receiver [
 	^ self
 		  variableFor: backend instanceName
 		  inStackFrame: self currentFrameId
+]
+
+{ #category : 'stack access' }
+SindarinDAPClient >> reset [
+
+	super reset.
+	breakpointManager := DAPClientBreakpointManager new.
+	backend := nil
 ]
 
 { #category : 'stack access' }

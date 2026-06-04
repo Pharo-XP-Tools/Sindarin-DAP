@@ -21,7 +21,8 @@ Class {
 		'breakpoints',
 		'functionBreakpoints',
 		'attachArguments',
-		'backend'
+		'backend',
+		'semaphore'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -72,6 +73,12 @@ DAPClientBuilder >> breakpoint: scriptPath line: anNumber [
 ]
 
 { #category : 'accessing' }
+DAPClientBuilder >> client [
+
+	client
+]
+
+{ #category : 'accessing' }
 DAPClientBuilder >> client: aDAPClient [
 
 	client := aDAPClient
@@ -115,6 +122,19 @@ DAPClientBuilder >> functionBreakpoint: functionName condition: aString [
 ]
 
 { #category : 'accessing' }
+DAPClientBuilder >> handleStartDebuggingRequest [
+
+	client requestHandlersAt: 'startDebugging' put: [ :req |
+			| secondClient |
+			self client: client class new.
+			attachArguments addAll: (req at: 'arguments' at: 'configuration').
+			secondClient := self startClientSession. 
+			client := secondClient.
+			semaphore signal.
+		]
+]
+
+{ #category : 'accessing' }
 DAPClientBuilder >> host: aString [
 
 	host := aString
@@ -127,7 +147,8 @@ DAPClientBuilder >> initialize [
 	host := 'localhost'.
 	client := DAPClient new.
 	breakpoints := Dictionary new.
-	functionBreakpoints := OrderedCollection new
+	functionBreakpoints := OrderedCollection new.
+	semaphore := Semaphore new
 ]
 
 { #category : 'private' }
@@ -147,7 +168,7 @@ DAPClientBuilder >> initializeArguments [
 		  supportsVariableType: true;
 		  supportsArgsCanBeInterpretedByShell: true;
 		  supportsMemoryEvent: true;
-		  supportsStartDebuggingRequest: true;
+		  supportsStartDebuggingRequest: false;
 		  locale: 'en'
 ]
 
@@ -192,6 +213,7 @@ DAPClientBuilder >> startClientSession [
 	adapterID ifNil: [ ^ self ].
 	attachArguments ifNil: [ ^ self ].
 
+
 	client onEvent: 'initialized' do: [ :event |
 			self setBreakpoints.
 			self setFunctionBreakpoints.
@@ -200,6 +222,8 @@ DAPClientBuilder >> startClientSession [
 	self connectClient: [ :resp | self launchClient ].
 
 	(client respondsTo: #backend:) ifTrue: [ client backend: backend ].
+	
+	semaphore waitTimeoutSeconds: 2.
 
 	^ client
 ]
