@@ -125,13 +125,14 @@ DAPClientBuilder >> functionBreakpoint: functionName condition: aString [
 DAPClientBuilder >> handleStartDebuggingRequest [
 
 	client requestHandlersAt: 'startDebugging' put: [ :req |
-			| secondClient |
+			| firstClient secondClient |
+			firstClient := client.
 			self client: client class new.
 			attachArguments addAll: (req at: 'arguments' at: 'configuration').
-			secondClient := self startClientSession. 
+			secondClient := self startClientSession.
 			client := secondClient.
 			semaphore signal.
-		]
+			firstClient closeConnection ]
 ]
 
 { #category : 'accessing' }
