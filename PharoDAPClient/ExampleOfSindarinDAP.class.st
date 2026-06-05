@@ -21,7 +21,7 @@ ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
 		  ('projectName' -> 'java') } asDictionary
 ]
 
-{ #category : 'utils' }
+{ #category : 'utilities' }
 ExampleOfSindarinDAP class >> attachArgumentsForJavaScriptExample [
 	"Returns the attach arguments for the JavaScript client example"
 
@@ -31,18 +31,18 @@ ExampleOfSindarinDAP class >> attachArgumentsForJavaScriptExample [
 		  ('skipFiles' -> { '<node_internals>/**' }).
 		  ('program'
 		   ->
-		   '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js').
+		   '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js').
 		  ('stopOnEntry' -> true) } asDictionary
 ]
 
-{ #category : 'utils' }
+{ #category : 'utilities' }
 ExampleOfSindarinDAP class >> attachArgumentsForPythonExample [
 	"Returns the attach arguments for the Python client example"
 
 	^ {
 		  ('program'
 		   ->
-		   '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/py/hello_world.py').
+		   '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py').
 		  ('redirectOutput' -> true).
 		  ('showReturnValue' -> true).
 		  ('justMyCode' -> false) } asDictionary
