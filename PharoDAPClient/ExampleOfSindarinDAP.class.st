@@ -9,7 +9,7 @@ Class {
 	#tag : 'Examples'
 }
 
-{ #category : 'utils' }
+{ #category : 'utilities' }
 ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
 	"Returns the attach arguments for the Java client example"
 
