@@ -143,6 +143,7 @@ DAPClientBuilder >> initialize [
 	client := DAPClient new.
 	breakpoints := Dictionary new.
 	functionBreakpoints := OrderedCollection new.
+	startDebuggingRequest := false.
 	semaphore := Semaphore new
 ]
 
