@@ -55,7 +55,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 	^ DAPClientBuilder newSindarinClient
 		  port: 64894;
 		  adapterID: 'java';
-		  attachArguments: self attachArgumentsForJavaExample;
+		  arguments: self attachArgumentsForJavaExample;
 		  breakpoint:
 			  '/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java'
 		  line: 9;
@@ -70,12 +70,12 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJavaScript [
 	^ DAPClientBuilder newSindarinClient
 		  adapterID: 'node';
 		  port: 5678;
-		  attachArguments: self attachArgumentsForJavaScriptExample;
+		  arguments: self attachArgumentsForJavaScriptExample;
 		  breakpoint:
 			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js'
 		  line: 21;
 		  backend: DAPBackendJavaScript new;
-		  handleStartDebuggingRequest;
+		  startDebuggingRequest: true;
 		  startClientSession
 ]
 
@@ -86,7 +86,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForPython [
 	^ DAPClientBuilder newSindarinClient
 		  port: 5678;
 		  adapterID: 'python';
-		  attachArguments: self attachArgumentsForPythonExample;
+		  arguments: self attachArgumentsForPythonExample;
 		  breakpoint:
 			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/py/hello_world.py'
 		  line: 3;

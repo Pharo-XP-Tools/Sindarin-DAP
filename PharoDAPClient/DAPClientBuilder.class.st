@@ -22,7 +22,8 @@ Class {
 		'functionBreakpoints',
 		'attachArguments',
 		'backend',
-		'semaphore'
+		'semaphore',
+		'startDebuggingRequest'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -31,6 +32,7 @@ Class {
 
 { #category : 'instance creation' }
 DAPClientBuilder class >> newSindarinClient [
+	"Entry point to build a SindarinDAPClient"
 
 	| builder |
 	builder := self new.
@@ -46,13 +48,14 @@ DAPClientBuilder >> adapterID: aString [
 ]
 
 { #category : 'accessing' }
-DAPClientBuilder >> attachArguments: anAttachArguments [
+DAPClientBuilder >> arguments: aDictionaryOfArguments [
 
-	attachArguments := anAttachArguments
+	attachArguments := aDictionaryOfArguments
 ]
 
 { #category : 'private' }
 DAPClientBuilder >> attachClient [
+	"Sends the attach request according to DAP protocol to the adapter"
 
 	client attach: attachArguments
 ]
@@ -64,12 +67,13 @@ DAPClientBuilder >> backend: aDAPBackend [
 ]
 
 { #category : 'accessing' }
-DAPClientBuilder >> breakpoint: scriptPath line: anNumber [
+DAPClientBuilder >> breakpoint: aFileReference line: anInteger [
+	"Registers a breakpoint at the file in aFileReference and line anInteger"
 
-	breakpoints at: scriptPath ifAbsentPut: [ OrderedCollection new ].
+	breakpoints at: aFileReference ifAbsentPut: [ OrderedCollection new ].
 
-	(breakpoints at: scriptPath) add:
-		(DAPSourceBreakpoint new line: anNumber)
+	(breakpoints at: aFileReference) add:
+		(DAPSourceBreakpoint new line: anInteger)
 ]
 
 { #category : 'accessing' }
@@ -85,36 +89,25 @@ DAPClientBuilder >> client: aDAPClient [
 ]
 
 { #category : 'private' }
-DAPClientBuilder >> configurationDone [
-
-	client configurationDone
-]
-
-{ #category : 'private' }
-DAPClientBuilder >> connectClient [
-
-	client connectTo: host port: port.
-	client startListening.
-	client initialize: self initializeArguments.
-]
-
-{ #category : 'private' }
 DAPClientBuilder >> connectClient: aBlock [
+	"Connects the client to the adapter, sends the initialize request, wait for response and then execute aBlock"
 
 	client connectTo: host port: port.
 	client startListening.
-	client initialize: (self initializeArguments) onResponse: aBlock.
+	client initialize: self initializeArguments onResponse: aBlock
 ]
 
 { #category : 'accessing' }
-DAPClientBuilder >> functionBreakpoint: functionName [
+DAPClientBuilder >> functionBreakpoint: aFunctionName [
+	"Registers a function breakpoint for the function named aFunctionName"
 
 	functionBreakpoints add:
-		(DAPFunctionBreakpoint new name: functionName)
+		(DAPFunctionBreakpoint new name: aFunctionName)
 ]
 
 { #category : 'accessing' }
 DAPClientBuilder >> functionBreakpoint: functionName condition: aString [
+	"Registers a function breakpoint for the function named aFunctionName with the condition aString"
 
 	functionBreakpoints add: (DAPFunctionBreakpoint new
 			 name: functionName;
@@ -123,16 +116,17 @@ DAPClientBuilder >> functionBreakpoint: functionName condition: aString [
 
 { #category : 'accessing' }
 DAPClientBuilder >> handleStartDebuggingRequest [
+	"Handles case when adapter is sending a startDebugging request"
 
 	client requestHandlersAt: 'startDebugging' put: [ :req |
-			| firstClient secondClient |
-			firstClient := client.
+			| initialClient newClient |
+			initialClient := client.
 			self client: client class new.
 			attachArguments addAll: (req at: 'arguments' at: 'configuration').
-			secondClient := self startClientSession.
-			client := secondClient.
+			newClient := self startClientSession.
+			client := newClient.
 			semaphore signal.
-			firstClient closeConnection ]
+			initialClient closeConnection ]
 ]
 
 { #category : 'accessing' }
@@ -154,6 +148,7 @@ DAPClientBuilder >> initialize [
 
 { #category : 'private' }
 DAPClientBuilder >> initializeArguments [
+	"Returns the initialize request according to DAP protocol"
 
 	^ DAPInitializeRequestArguments new
 		  clientID: 'my-dap-client';
@@ -175,6 +170,7 @@ DAPClientBuilder >> initializeArguments [
 
 { #category : 'private' }
 DAPClientBuilder >> launchClient [
+	"Sends the launch request according to DAP protocol to the adapter"
 
 	client launch: attachArguments
 ]
@@ -187,6 +183,7 @@ DAPClientBuilder >> port: anNumber [
 
 { #category : 'private' }
 DAPClientBuilder >> setBreakpoints [
+	"Installs all registered breakpoints"
 
 	breakpoints keysAndValuesDo: [ :scriptPath :sourceBreakpoints |
 			| args |
@@ -199,6 +196,7 @@ DAPClientBuilder >> setBreakpoints [
 
 { #category : 'private' }
 DAPClientBuilder >> setFunctionBreakpoints [
+	"Installs all registered function breakpoints"
 
 	| args |
 	args := DAPSetFunctionBreakpointsArguments new breakpoints:
@@ -209,22 +207,30 @@ DAPClientBuilder >> setFunctionBreakpoints [
 
 { #category : 'api' }
 DAPClientBuilder >> startClientSession [
+	"Start the DAPClient session and returns it ready to use"
+
+	startDebuggingRequest ifTrue: [ self handleStartDebuggingRequest ].
 
 	port ifNil: [ ^ self ].
 	adapterID ifNil: [ ^ self ].
 	attachArguments ifNil: [ ^ self ].
 
-
 	client onEvent: 'initialized' do: [ :event |
 			self setBreakpoints.
 			self setFunctionBreakpoints.
-			self configurationDone ].
+			client configurationDone ].
 
 	self connectClient: [ :resp | self launchClient ].
 
 	(client respondsTo: #backend:) ifTrue: [ client backend: backend ].
-	
-	semaphore waitTimeoutSeconds: 2.
+
+	startDebuggingRequest ifTrue: [ semaphore waitTimeoutSeconds: 2 ].
 
 	^ client
+]
+
+{ #category : 'accessing' }
+DAPClientBuilder >> startDebuggingRequest: aBoolean [
+
+	startDebuggingRequest := aBoolean
 ]
