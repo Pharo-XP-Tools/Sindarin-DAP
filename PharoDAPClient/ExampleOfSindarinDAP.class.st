@@ -72,7 +72,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJavaScript [
 		  port: 5678;
 		  arguments: self attachArgumentsForJavaScriptExample;
 		  breakpoint:
-			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/js/bug1.js'
+			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js'
 		  line: 21;
 		  backend: DAPBackendJavaScript new;
 		  startDebuggingRequest: true;
@@ -88,8 +88,8 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForPython [
 		  adapterID: 'python';
 		  arguments: self attachArgumentsForPythonExample;
 		  breakpoint:
-			  '/Users/julesboulet/Documents/VSCode_projects/Test_bugs/py/hello_world.py'
-		  line: 3;
+			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py'
+		  line: 6;
 		  backend: DAPBackendPython new;
 		  startClientSession
 ]
