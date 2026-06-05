@@ -63,6 +63,7 @@ myDAPClient := DAPClientBuilder newSindarinClient
         breakpoint: aFilePath;
         line: aLineNumber;
         backend: DAPBackendMyLanguage new;
+		startDebuggingRequest: aBoolean;
         startClientSession
 
 ``` 
@@ -73,6 +74,7 @@ Where:
 - `aDictionaryOfAttachArguments` is a dictionary with attach arguments
 - `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
 - `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
+- `aBoolean` is `false` by default but must be `true` is the adapter on which you will connect sends a `startDebuggingRequest` (ex: "js-debug" adapter)  
 
 You can find some examples of Sindarin DAP Clients in `ExampleOfSindarinDAP`. 
 
