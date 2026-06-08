@@ -123,6 +123,7 @@ DAPClientBuilder >> handleStartDebuggingRequest [
 			initialClient := client.
 			self client: client class new.
 			attachArguments addAll: (req at: 'arguments' at: 'configuration').
+			startDebuggingRequest := false.
 			newClient := self startClientSession.
 			client := newClient.
 			semaphore signal.
@@ -225,7 +226,11 @@ DAPClientBuilder >> startClientSession [
 
 	(client respondsTo: #backend:) ifTrue: [ client backend: backend ].
 
-	startDebuggingRequest ifTrue: [ semaphore waitTimeoutSeconds: 2 ].
+	startDebuggingRequest ifTrue: [
+			semaphore
+				waitTimeoutSeconds: 1
+				onCompletion: [ ]
+				onTimeout: [ ^ Error new signal: 'Request not received' ] ].
 
 	^ client
 ]
