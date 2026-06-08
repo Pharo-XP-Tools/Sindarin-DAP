@@ -20,10 +20,10 @@ Class {
 		'adapterID',
 		'breakpoints',
 		'functionBreakpoints',
-		'attachArguments',
 		'backend',
 		'semaphore',
-		'startDebuggingRequest'
+		'startDebuggingRequest',
+		'launchArguments'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -50,14 +50,7 @@ DAPClientBuilder >> adapterID: aString [
 { #category : 'accessing' }
 DAPClientBuilder >> arguments: aDictionaryOfArguments [
 
-	attachArguments := aDictionaryOfArguments
-]
-
-{ #category : 'private' }
-DAPClientBuilder >> attachClient [
-	"Sends the attach request according to DAP protocol to the adapter"
-
-	client attach: attachArguments
+	launchArguments := aDictionaryOfArguments
 ]
 
 { #category : 'accessing' }
@@ -114,7 +107,7 @@ DAPClientBuilder >> functionBreakpoint: functionName condition: aString [
 			 condition: aString)
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private' }
 DAPClientBuilder >> handleStartDebuggingRequest [
 	"Handles case when adapter is sending a startDebugging request"
 
@@ -122,7 +115,7 @@ DAPClientBuilder >> handleStartDebuggingRequest [
 			| initialClient newClient |
 			initialClient := client.
 			self client: client class new.
-			attachArguments addAll: (req at: 'arguments' at: 'configuration').
+			launchArguments addAll: (req at: 'arguments' at: 'configuration').
 			startDebuggingRequest := false.
 			newClient := self startClientSession.
 			client := newClient.
@@ -174,7 +167,7 @@ DAPClientBuilder >> initializeArguments [
 DAPClientBuilder >> launchClient [
 	"Sends the launch request according to DAP protocol to the adapter"
 
-	client launch: attachArguments
+	client launch: launchArguments
 ]
 
 { #category : 'accessing' }
@@ -215,7 +208,7 @@ DAPClientBuilder >> startClientSession [
 
 	port ifNil: [ ^ self ].
 	adapterID ifNil: [ ^ self ].
-	attachArguments ifNil: [ ^ self ].
+	launchArguments ifNil: [ ^ self ].
 
 	client onEvent: 'initialized' do: [ :event |
 			self setBreakpoints.

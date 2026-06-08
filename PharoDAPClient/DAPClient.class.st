@@ -31,20 +31,6 @@ DAPClient >> adapterSupport: aCapabilityName [
 	^ initResponse at: 'body' at: aCapabilityName ifAbsent: [ ^ false ]
 ]
 
-{ #category : 'requests' }
-DAPClient >> attach: attachArguments [
-
-	self attach: attachArguments onResponse: [ :resp | ]
-]
-
-{ #category : 'requests' }
-DAPClient >> attach: attachArguments onResponse: aBlock [
-
-	| request |
-	request := DAPAttachRequest withArguments: attachArguments.
-	self sendRequest: request onResponse: aBlock 
-]
-
 { #category : 'connection open/close' }
 DAPClient >> closeConnection [
 
@@ -282,6 +268,7 @@ DAPClient >> launch: launchArguments [
 
 { #category : 'requests' }
 DAPClient >> launch: launchArguments onResponse: aBlock [
+	"Sends a launch request to the adapter according to DAP protocol and executes aBlock with the response"
 
 	| request |
 	request := DAPLaunchRequest withArguments: launchArguments.
@@ -364,9 +351,9 @@ DAPClient >> requestHandlers [
 ]
 
 { #category : 'accessing' }
-DAPClient >> requestHandlers: anObject [
+DAPClient >> requestHandlers: aDictionary [
 
-	requestHandlers := anObject
+	requestHandlers := aDictionary
 ]
 
 { #category : 'communication' }
@@ -374,15 +361,6 @@ DAPClient >> requestHandlersAt: aRequest put: aBlock [
 	"Add a way to answer aRequest with aBlock"
 
 	requestHandlers at: aRequest put: aBlock
-]
-
-{ #category : 'initialization' }
-DAPClient >> reset [
-	"Closes the connection and reset attributes"
-
-	self closeConnection.
-	dapHistory := DAPHistory new.
-	seq := 1
 ]
 
 { #category : 'accessing' }

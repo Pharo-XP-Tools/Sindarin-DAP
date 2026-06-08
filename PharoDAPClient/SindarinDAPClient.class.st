@@ -271,14 +271,6 @@ SindarinDAPClient >> receiver [
 ]
 
 { #category : 'stack access' }
-SindarinDAPClient >> reset [
-
-	super reset.
-	breakpointManager := DAPClientBreakpointManager new.
-	backend := nil
-]
-
-{ #category : 'stack access' }
 SindarinDAPClient >> scopesForFrame: aFrameId [
 	"take a valid frame id and return a collection of DAPScope"
 
