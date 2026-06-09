@@ -23,7 +23,7 @@ Class {
 		'backend',
 		'semaphore',
 		'startDebuggingRequest',
-		'launchArguments'
+		'arguments'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -50,7 +50,7 @@ DAPClientBuilder >> adapterID: aString [
 { #category : 'accessing' }
 DAPClientBuilder >> arguments: aDictionaryOfArguments [
 
-	launchArguments := aDictionaryOfArguments
+	arguments := aDictionaryOfArguments
 ]
 
 { #category : 'accessing' }
@@ -115,7 +115,7 @@ DAPClientBuilder >> handleStartDebuggingRequest [
 			| initialClient newClient |
 			initialClient := client.
 			self client: client class new.
-			launchArguments addAll: (req at: 'arguments' at: 'configuration').
+			arguments addAll: (req at: 'arguments' at: 'configuration').
 			startDebuggingRequest := false.
 			newClient := self startClientSession.
 			client := newClient.
@@ -159,7 +159,7 @@ DAPClientBuilder >> initializeArguments [
 		  supportsVariableType: true;
 		  supportsArgsCanBeInterpretedByShell: true;
 		  supportsMemoryEvent: true;
-		  supportsStartDebuggingRequest: false;
+		  supportsStartDebuggingRequest: startDebuggingRequest;
 		  locale: 'en'
 ]
 
@@ -167,7 +167,7 @@ DAPClientBuilder >> initializeArguments [
 DAPClientBuilder >> launchClient [
 	"Sends the launch request according to DAP protocol to the adapter"
 
-	client launch: launchArguments
+	client launch: arguments
 ]
 
 { #category : 'accessing' }
@@ -208,7 +208,7 @@ DAPClientBuilder >> startClientSession [
 
 	port ifNil: [ ^ self ].
 	adapterID ifNil: [ ^ self ].
-	launchArguments ifNil: [ ^ self ].
+	arguments ifNil: [ ^ self ].
 
 	client onEvent: 'initialized' do: [ :event |
 			self setBreakpoints.

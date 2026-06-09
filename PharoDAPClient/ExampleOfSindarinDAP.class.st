@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'utilities' }
-ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
+ExampleOfSindarinDAP class >> argumentsForJavaExample [
 	"Returns the attach arguments for the Java client example"
 
 	^ {
@@ -22,7 +22,7 @@ ExampleOfSindarinDAP class >> attachArgumentsForJavaExample [
 ]
 
 { #category : 'utilities' }
-ExampleOfSindarinDAP class >> attachArgumentsForJavaScriptExample [
+ExampleOfSindarinDAP class >> argumentsForJavaScriptExample [
 	"Returns the attach arguments for the JavaScript client example"
 
 	^ {
@@ -36,7 +36,7 @@ ExampleOfSindarinDAP class >> attachArgumentsForJavaScriptExample [
 ]
 
 { #category : 'utilities' }
-ExampleOfSindarinDAP class >> attachArgumentsForPythonExample [
+ExampleOfSindarinDAP class >> argumentsForPythonExample [
 	"Returns the attach arguments for the Python client example"
 
 	^ {
@@ -55,7 +55,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 	^ DAPClientBuilder newSindarinClient
 		  port: 64894;
 		  adapterID: 'java';
-		  arguments: self attachArgumentsForJavaExample;
+		  arguments: self argumentsForJavaExample;
 		  breakpoint:
 			  '/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java'
 		  line: 9;
@@ -70,7 +70,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJavaScript [
 	^ DAPClientBuilder newSindarinClient
 		  adapterID: 'node';
 		  port: 5678;
-		  arguments: self attachArgumentsForJavaScriptExample;
+		  arguments: self argumentsForJavaScriptExample;
 		  breakpoint:
 			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js'
 		  line: 21;
@@ -86,7 +86,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForPython [
 	^ DAPClientBuilder newSindarinClient
 		  port: 5678;
 		  adapterID: 'python';
-		  arguments: self attachArgumentsForPythonExample;
+		  arguments: self argumentsForPythonExample;
 		  breakpoint:
 			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py'
 		  line: 6;
