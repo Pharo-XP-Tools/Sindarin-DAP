@@ -254,7 +254,7 @@ You can run an example of Sindarin DAP Client by:
 
 - Starting the js-debug adapter in its directory:
 ```bash
-node js-debug/src/dapDebugServer.js 5678
+node src/dapDebugServer.js 5678
 ```
 
 - In a Pharo Playground, run:
