@@ -29,9 +29,10 @@ ExampleOfSindarinDAP class >> argumentsForJavaScriptExample [
 		  ('type' -> 'pwa-node').
 		  ('request' -> 'launch').
 		  ('skipFiles' -> { '<node_internals>/**' }).
-		  ('program'
-		   ->
-		   '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js').
+		  ('program' -> (FileLocator imageDirectory
+		    /
+		    'pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js')
+			   fullName).
 		  ('stopOnEntry' -> true) } asDictionary
 ]
 
@@ -40,9 +41,10 @@ ExampleOfSindarinDAP class >> argumentsForPythonExample [
 	"Returns the attach arguments for the Python client example"
 
 	^ {
-		  ('program'
-		   ->
-		   '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py').
+		  ('program' -> (FileLocator imageDirectory
+		    /
+		    'pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py')
+			   fullName).
 		  ('redirectOutput' -> true).
 		  ('showReturnValue' -> true).
 		  ('justMyCode' -> false) } asDictionary
@@ -56,8 +58,10 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 		  port: 64894;
 		  adapterID: 'java';
 		  arguments: self argumentsForJavaExample;
-		  breakpoint:
-			  '/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java'
+		  breakpoint: (FileLocator imageDirectory
+			   /
+				   '/Users/flavienvolant/Documents/sindarin-dap/java/src/main/java/example/Main.java')
+				  fullName
 		  line: 9;
 		  backend: DAPBackendJava new;
 		  startClientSession
@@ -71,8 +75,10 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJavaScript [
 		  adapterID: 'node';
 		  port: 5678;
 		  arguments: self argumentsForJavaScriptExample;
-		  breakpoint:
-			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js'
+		  breakpoint: (FileLocator imageDirectory
+			   /
+				   'pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/JSScript.js')
+				  fullName
 		  line: 21;
 		  backend: DAPBackendJavaScript new;
 		  startDebuggingRequest: true;
@@ -87,8 +93,10 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForPython [
 		  port: 5678;
 		  adapterID: 'python';
 		  arguments: self argumentsForPythonExample;
-		  breakpoint:
-			  '/pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py'
+		  breakpoint: (FileLocator imageDirectory
+			   /
+				   'pharo-local/iceberg/Pharo-XP-Tools/Sindarin-DAP/scriptExamples/pythonScript.py')
+				  fullName
 		  line: 6;
 		  backend: DAPBackendPython new;
 		  startClientSession
