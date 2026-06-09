@@ -6,8 +6,7 @@ Class {
 	#superclass : 'DAPClient',
 	#instVars : [
 		'backend',
-		'breakpointManager',
-		'continueStrategy'
+		'breakpointManager'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',

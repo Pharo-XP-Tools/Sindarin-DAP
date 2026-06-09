@@ -31,10 +31,11 @@ myDAPClient := DAPClientBuilder new
         host: aHost;
         port: aPort;
         adapterID: 'myAdapterId';
-        attachArguments: aDictionaryOfAttachArguments;
+        arguments: aDictionaryOfArguments;
         breakpoint: aFilePath;
         line: aLineNumber;
         backend: DAPBackendMyLanguage new;
+		startDebuggingRequest: aBoolean;
         startClientSession
 
 ``` 
@@ -42,9 +43,10 @@ myDAPClient := DAPClientBuilder new
 Where: 
 - `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
 - `'myAdapterId'` is the id of the adapter; 
-- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aDictionaryOfArguments` is a dictionary of arguments for a launch/attach request
 - `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
 - `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
+- `aBoolean` is `false` by default but must be `true` is the adapter on which you will connect sends a `startDebuggingRequest` (ex: "js-debug" adapter)  
 
 ### Build a Sindarin DAP Client
 
@@ -57,10 +59,11 @@ myDAPClient := DAPClientBuilder newSindarinClient
         host: aHost;
         port: aPort;
         adapterID: 'myAdapterId';
-        attachArguments: aDictionaryOfAttachArguments;
+        arguments: aDictionaryOfArguments;
         breakpoint: aFilePath;
         line: aLineNumber;
         backend: DAPBackendMyLanguage new;
+		startDebuggingRequest: aBoolean;
         startClientSession
 
 ``` 
@@ -68,9 +71,10 @@ myDAPClient := DAPClientBuilder newSindarinClient
 Where: 
 - `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
 - `'myAdapterId'` is the id of the adapter; 
-- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aDictionaryOfArguments` is a dictionary of arguments for a launch/attach request
 - `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
 - `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
+- `aBoolean` is `false` by default but must be `true` is the adapter on which you will connect sends a `startDebuggingRequest` (ex: "js-debug" adapter)  
 
 You can find some examples of Sindarin DAP Clients in `ExampleOfSindarinDAP`. 
 
@@ -179,7 +183,7 @@ To use `java-debug`, you must start `eclipse.jdt.ls` with the debug plugin inclu
 }
 ```
 
-### Starting a Debug Session
+#### Starting a Debug Session
 Once eclipse.jdt.ls is running, send the following command via your LSP client:
 ``` json
 {
@@ -209,17 +213,7 @@ Extract it, then locate the DAP server entry point:
 js-debug/src/dapDebugServer.js
 ```
 
-#### Starting the Target Script
-
-Run your Node.js script in debug mode:
-
-```bash
-node --inspect-brk=0.0.0.0:9229 js/script.js
-```
-
-This starts Node with the inspector protocol enabled and waits for a debugger to attach.
-
-#### Starting the DAP Adapter
+#### Starting the Adapter
 
 Launch the debug adapter server:
 ```
@@ -227,83 +221,20 @@ node js-debug/src/dapDebugServer.js 5678
 ```
 The adapter will listen for DAP connections on port `5678`.
 
-#### Client Configuration (Pharo)
-
-This adapter require the client to support `startDebuggingRequest`. Therefore, a second DAP client (`DAPClientForJSStartDebug`) is created with extended `attachArguments`.
-
-``` smalltalk
-initialize
-	super initialize.
-
-	requestHandlers
-		at: 'startDebugging'
-		put: [ :req | self handleStartDebuggingRequest: req ]
-
-
-handleStartDebuggingRequest: aStartDebuggingRequest
-
-	| childClient |
-
-	childClient := DAPClientForJSStartDebug new
-		attachOtherArguments:
-			(aStartDebuggingRequest
-				at: 'arguments'
-				at: 'configuration').
-
-	childClient startSession.
-
-	(ClientDAPPresenter newWithClient: childClient) open
-```
-
-#### Starting a Session
-
-``` smalltalk
-startSession
-	
-	DAPClientBuilder new
-		client: self;
-		adapterID: 'node';
-		port: 5678;
-		attachArguments: self attachArguments;
-		startClientSession
-
-attachArguments
-	
-	^ {
-		('name' -> 'Attach Node.js script.js').
-		('type' -> 'pwa-node').
-		('request' -> 'attach').
-		('address' -> 'localhost').
-		('port' -> 9229).
-		('continueOnAttach' -> true)
-	} asDictionary
-```
-
-#### Starting the Debugging Session
-
-- Start your Node.js script with --inspect-brk
-- Start the vscode-js-debug adapter
-- In a Pharo Playground, run:
-``` smalltalk
-client := DAPClientForJS new startSession.
-```
-
 ## Examples
 
 ### Python client example
 
 You can run an example of Sindarin DAP Client by:
 
-- Starting the `debubpy` adapter in the working directory with `python -m debugpy --listen 5678 --wait-for-client scriptExamples/pythonScript.py`
+- Starting the `debubpy` adapter with `python3 debugpy-adapter --port 5678`
 - In a Pharo Playground, run:
 ``` smalltalk
 client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForPython.
 client open.
 ```
 
-Then you will have access to the UI and you can play with it to discover how it works.
-
-#### Java client example
+### Java client example
 
 You can run an example of Sindarin DAP Client by:
 
@@ -317,6 +248,19 @@ client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPC
 client open.
 ```
 
-#### JavaScript client example
+### JavaScript client example
 
-For the moment, the example is a work in progress but it will be updated soon.
+You can run an example of Sindarin DAP Client by:
+
+- Starting the js-debug adapter in its directory:
+```bash
+node --dns-result-order=ipv4first js-debug/src/dapDebugServer.js 5678
+```
+
+- In a Pharo Playground, run:
+```smalltalk
+client := ClientDAPPresenter newWithClient: ExampleOfSindarinDAP getSindarinDAPClientForJavaScript.
+client open.
+```
+
+Then you will have access to the UI and you can play with it to discover how it works.
