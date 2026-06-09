@@ -31,7 +31,7 @@ myDAPClient := DAPClientBuilder new
         host: aHost;
         port: aPort;
         adapterID: 'myAdapterId';
-        attachArguments: aDictionaryOfAttachArguments;
+        arguments: aDictionaryOfArguments;
         breakpoint: aFilePath;
         line: aLineNumber;
         backend: DAPBackendMyLanguage new;
@@ -43,7 +43,7 @@ myDAPClient := DAPClientBuilder new
 Where: 
 - `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
 - `'myAdapterId'` is the id of the adapter; 
-- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aDictionaryOfArguments` is a dictionary of arguments for a launch/attach request
 - `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
 - `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
 - `aBoolean` is `false` by default but must be `true` is the adapter on which you will connect sends a `startDebuggingRequest` (ex: "js-debug" adapter)  
@@ -59,7 +59,7 @@ myDAPClient := DAPClientBuilder newSindarinClient
         host: aHost;
         port: aPort;
         adapterID: 'myAdapterId';
-        attachArguments: aDictionaryOfAttachArguments;
+        arguments: aDictionaryOfArguments;
         breakpoint: aFilePath;
         line: aLineNumber;
         backend: DAPBackendMyLanguage new;
@@ -71,7 +71,7 @@ myDAPClient := DAPClientBuilder newSindarinClient
 Where: 
 - `aHost` and `aPort` are the host and port of the adapter (where it is deployed);
 - `'myAdapterId'` is the id of the adapter; 
-- `aDictionaryOfAttachArguments` is a dictionary with attach arguments
+- `aDictionaryOfArguments` is a dictionary of arguments for a launch/attach request
 - `aFilePath` is the path of the file where you want to place the first breakpoint and `aLineNumber` corresponding the line number
 - `DAPBackendMyLanguage` is an object providing utils methods to make DAP request according to the language in which your project is coded.
 - `aBoolean` is `false` by default but must be `true` is the adapter on which you will connect sends a `startDebuggingRequest` (ex: "js-debug" adapter)  
