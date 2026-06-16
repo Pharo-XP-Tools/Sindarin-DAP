@@ -33,10 +33,16 @@ DAPBackendJava >> expressionKey: varExpr instanceOf: classExpr [
 	^ varExpr , ' instanceof ' , classExpr
 ]
 
+{ #category : 'actions' }
+DAPBackendJava >> hashExpressionFor: aString [
+
+	^ 'System.identityHashCode(' , aString , ')'
+]
+
 { #category : 'accessing' }
 DAPBackendJava >> idExpressionFor: expr [
 
-	^ 'Integer.toString(System.identityHashCode(' , expr , '))'
+	^ 'Integer.toString(' , self hashExpressionFor: expr , ')'
 ]
 
 { #category : 'initialization' }

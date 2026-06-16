@@ -31,6 +31,12 @@ DAPBackendPython >> expressionKey: expr instanceOf: classExpr [
 	^ 'isinstance(' , expr , ',' , classExpr , ')'
 ]
 
+{ #category : 'actions' }
+DAPBackendPython >> hashExpressionFor: aString [
+
+	^ 'id(' , aString , ')'
+]
+
 { #category : 'accessing' }
 DAPBackendPython >> idExpressionFor: objExpr [
 

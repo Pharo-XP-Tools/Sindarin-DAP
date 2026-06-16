@@ -31,6 +31,13 @@ DAPBackendJavaScript >> expressionKey: varExpr instanceOf: classExpr [
 	^ varExpr , ' instanceof ' , classExpr
 ]
 
+{ #category : 'actions' }
+DAPBackendJavaScript >> hashExpressionFor: aString [
+
+	self flag: 'no id for js ?'.
+	^ ''
+]
+
 { #category : 'accessing' }
 DAPBackendJavaScript >> idExpressionFor: objExpr [
 	"^ aString"

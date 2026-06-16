@@ -59,6 +59,12 @@ DAPBackend >> generateKey [
 	^ 'instance_' , UUID new asString
 ]
 
+{ #category : 'actions' }
+DAPBackend >> hashExpressionFor: aString [
+
+	^ self subclassResponsibility
+]
+
 { #category : 'accessing' }
 DAPBackend >> idExpressionFor: objExpr [
 	"^ aString"
