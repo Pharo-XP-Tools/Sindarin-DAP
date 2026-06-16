@@ -352,6 +352,22 @@ SindarinDAPClient >> stackFrames: threadId [
 		  returning: 'stackFrames'
 ]
 
+{ #category : 'private' }
+SindarinDAPClient >> stepInWaitForStoppedEvent [
+
+	| stopped |
+	stopped := false.
+
+	self onEvent: 'stopped' do: [ :event | stopped := true ].
+
+	self stepIn: (DAPStepInArguments new
+			 threadId: self mainThreadId;
+			 yourself).
+
+	[ stopped ] whileFalse: [
+		self isExecutionFinished ifTrue: [ stopped := true ] ]
+]
+
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepOut [
 
@@ -380,11 +396,7 @@ SindarinDAPClient >> stepUntil: aPredicate do: aBlock [
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilBlock: aBlock [
 
-	[ self isExecutionFinished or: [ aBlock value ] ] whileFalse: [
-			self handleAsyncRawResponse: [ :resp |
-					self
-						stepIn: (DAPStepInArguments new threadId: self mainThreadId)
-						onResponse: resp ] ]
+	self stepUntil: aBlock do: [ ]
 ]
 
 { #category : 'stepping - steps' }
@@ -392,28 +404,13 @@ SindarinDAPClient >> stepUntilBlock: aBooleanBlock do: aBlock [
 
 	[ self isExecutionFinished or: [ aBooleanBlock value ] ] whileFalse: [
 			aBlock value.
-
-			self handleAsyncRawResponse: [ :resp |
-					self
-						stepIn: (DAPStepInArguments new
-								 threadId: self mainThreadId;
-								 yourself)
-						onResponse: resp ] ]
+			self stepInWaitForStoppedEvent ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilString: aString [
 
-	[
-		self isExecutionFinished or: [
-			self evaluateBoolean: aString frameId: self currentFrameId ] ]
-		whileFalse: [
-				self handleAsyncRawResponse: [ :resp |
-						self
-							stepIn: (DAPStepInArguments new
-									 threadId: self mainThreadId;
-									 yourself)
-							onResponse: resp ] ]
+	self stepUntilString: aString do: [ ]
 ]
 
 { #category : 'stepping - steps' }
@@ -425,12 +422,7 @@ SindarinDAPClient >> stepUntilString: aString do: aBlock [
 		whileFalse: [
 				aBlock value.
 
-				self handleAsyncRawResponse: [ :resp |
-						self
-							stepIn: (DAPStepInArguments new
-									 threadId: self mainThreadId;
-									 yourself)
-							onResponse: resp ] ]
+				self stepInWaitForStoppedEvent ]
 ]
 
 { #category : 'stack access' }
