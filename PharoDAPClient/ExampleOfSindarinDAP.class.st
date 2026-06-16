@@ -11,14 +11,14 @@ Class {
 
 { #category : 'utilities' }
 ExampleOfSindarinDAP class >> argumentsForJavaExample [
-	"Returns the attach arguments for the Java client example"
+	"Returns the launch arguments for the Java client example"
 
 	^ {
-		  ('name' -> 'Attach to Java').
-		  ('type' -> 'server').
-		  ('hostName' -> 'localhost').
-		  ('port' -> 5005).
-		  ('projectName' -> 'java') } asDictionary
+		  ('mainClass' -> 'example.Main').
+		  ('classPaths'
+		   ->
+		   { '/path/to/compile/classes' }).
+		  ('console' -> 'internalConsole') } asDictionary
 ]
 
 { #category : 'utilities' }
@@ -55,7 +55,7 @@ ExampleOfSindarinDAP class >> getSindarinDAPClientForJava [
 	"Returns a SindarinDAPClient for Java, the client returned is an example to see how it works"
 
 	^ DAPClientBuilder newSindarinClient
-		  port: 64894;
+		  port: 5678;
 		  adapterID: 'java';
 		  arguments: self argumentsForJavaExample;
 		  breakpoint: (FileLocator imageDirectory
