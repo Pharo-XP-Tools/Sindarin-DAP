@@ -352,6 +352,24 @@ SindarinDAPClient >> stackFrames: threadId [
 		  returning: 'stackFrames'
 ]
 
+{ #category : 'private' }
+SindarinDAPClient >> stepInWaitForStoppedEvent [
+	"Perform a step-in request and block until the adapter reports a
+    stopped event or the execution terminates."
+
+	| stopped |
+	stopped := false.
+
+	self onEvent: 'stopped' do: [ :event | stopped := true ].
+
+	self stepIn: (DAPStepInArguments new
+			 threadId: self mainThreadId;
+			 yourself).
+
+	[ stopped ] whileFalse: [
+		self isExecutionFinished ifTrue: [ stopped := true ] ]
+]
+
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepOut [
 
@@ -363,14 +381,21 @@ SindarinDAPClient >> stepOut [
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntil: aPredicate [
+	"Perform step-in operations until aPredicate is satisfied or the
+    execution finishes."
+
 	"aPredicate is expected to be a ByteString or a BlockClosure"
 
-	[aPredicate stepUntilOn: self] on: RequestFailedError do: [ :ex | ]
+	self stepUntil: aPredicate do: [ ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntil: aPredicate do: aBlock [
-	"aPredicate is expected to be a ByteString or a BlockClosure"
+	"Perform step-in operations until aPredicate is satisfied or the
+    execution finishes. Evaluate aBlock before each step."
+
+	"aPredicate is expected to understand #stepUntilOn:do: (typically
+    a ByteString or a BlockClosure)."
 
 	[ aPredicate stepUntilOn: self do: aBlock ]
 		on: RequestFailedError
@@ -379,45 +404,36 @@ SindarinDAPClient >> stepUntil: aPredicate do: aBlock [
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilBlock: aBlock [
+	"Perform step-in operations until aBlock evaluates to true or the
+    execution finishes."
 
-	[ self isExecutionFinished or: [ aBlock value ] ] whileFalse: [
-			self handleAsyncRawResponse: [ :resp |
-					self
-						stepIn: (DAPStepInArguments new threadId: self mainThreadId)
-						onResponse: resp ] ]
+	self stepUntil: aBlock do: [ ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilBlock: aBooleanBlock do: aBlock [
+	"Repeatedly evaluate aBlock and perform a step-in operation until
+    aBooleanBlock evaluates to true or the execution finishes."
 
 	[ self isExecutionFinished or: [ aBooleanBlock value ] ] whileFalse: [
 			aBlock value.
-
-			self handleAsyncRawResponse: [ :resp |
-					self
-						stepIn: (DAPStepInArguments new
-								 threadId: self mainThreadId;
-								 yourself)
-						onResponse: resp ] ]
+			self stepInWaitForStoppedEvent ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilString: aString [
+	"Perform step-in operations until the boolean expression represented
+    by aString evaluates to true in the current frame or the execution
+    finishes."
 
-	[
-		self isExecutionFinished or: [
-			self evaluateBoolean: aString frameId: self currentFrameId ] ]
-		whileFalse: [
-				self handleAsyncRawResponse: [ :resp |
-						self
-							stepIn: (DAPStepInArguments new
-									 threadId: self mainThreadId;
-									 yourself)
-							onResponse: resp ] ]
+	self stepUntilString: aString do: [ ]
 ]
 
 { #category : 'stepping - steps' }
 SindarinDAPClient >> stepUntilString: aString do: aBlock [
+	"Repeatedly evaluate aString in the current frame and perform a step-in
+	operation until the expression evaluates to true or the execution
+	finishes."
 
 	[
 		self isExecutionFinished or: [
@@ -425,12 +441,7 @@ SindarinDAPClient >> stepUntilString: aString do: aBlock [
 		whileFalse: [
 				aBlock value.
 
-				self handleAsyncRawResponse: [ :resp |
-						self
-							stepIn: (DAPStepInArguments new
-									 threadId: self mainThreadId;
-									 yourself)
-							onResponse: resp ] ]
+				self stepInWaitForStoppedEvent ]
 ]
 
 { #category : 'stack access' }

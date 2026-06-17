@@ -31,6 +31,14 @@ DAPBackendPython >> expressionKey: expr instanceOf: classExpr [
 	^ 'isinstance(' , expr , ',' , classExpr , ')'
 ]
 
+{ #category : 'actions' }
+DAPBackendPython >> hashExpressionFor: aString [
+
+	"Return an expression that when evaluated by the python debug adapter computes the identity hash of aString."
+
+	^ 'id(' , aString , ')'
+]
+
 { #category : 'accessing' }
 DAPBackendPython >> idExpressionFor: objExpr [
 
