@@ -61,6 +61,7 @@ DAPBackend >> generateKey [
 
 { #category : 'actions' }
 DAPBackend >> hashExpressionFor: aString [
+	"Return an expression that when evaluated by the debug adapter computes the hash of aString."
 
 	^ self subclassResponsibility
 ]

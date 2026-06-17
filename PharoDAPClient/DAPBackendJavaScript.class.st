@@ -33,8 +33,9 @@ DAPBackendJavaScript >> expressionKey: varExpr instanceOf: classExpr [
 
 { #category : 'actions' }
 DAPBackendJavaScript >> hashExpressionFor: aString [
+	"Return an expression that when evaluated by the debug adapter computes the identity hash of aString.
+	Not supported for JS"
 
-	self flag: 'no id for js ?'.
 	^ ''
 ]
 

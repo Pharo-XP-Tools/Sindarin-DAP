@@ -36,6 +36,8 @@ DAPBackendJava >> expressionKey: varExpr instanceOf: classExpr [
 { #category : 'actions' }
 DAPBackendJava >> hashExpressionFor: aString [
 
+	"Return an expression that when evaluated by the java debug adapter computes the identity hash of aString."
+
 	^ 'System.identityHashCode(' , aString , ')'
 ]
 
