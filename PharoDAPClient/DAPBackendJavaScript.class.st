@@ -21,12 +21,15 @@ DAPBackendJavaScript >> constructorsOf: classExpr [
 
 { #category : 'accessing' }
 DAPBackendJavaScript >> equalityExpressionLeft: leftExpr right: rightExpr [
+	"Return an equality expression between two expressions."
 
 	^ leftExpr , ' === ' , rightExpr
 ]
 
 { #category : 'accessing' }
 DAPBackendJavaScript >> expressionKey: varExpr instanceOf: classExpr [
+	"Creates an expression that checks whether the given variable
+    expression is an instance of the specified class expression."
 
 	^ varExpr , ' instanceof ' , classExpr
 ]
@@ -39,15 +42,9 @@ DAPBackendJavaScript >> hashExpressionFor: aString [
 	^ ''
 ]
 
-{ #category : 'accessing' }
-DAPBackendJavaScript >> idExpressionFor: objExpr [
-	"^ aString"
-
-	^ objExpr 
-]
-
 { #category : 'initialization' }
 DAPBackendJavaScript >> initializeRegistry [
+	"Initializes the registry used to store data in the debuggee program."
 
 	clientDAP
 		stackTrace:
@@ -76,13 +73,14 @@ DAPBackendJavaScript >> methodsOf: objExpr [
 
 { #category : 'accessing' }
 DAPBackendJavaScript >> readExpressionForKey: aString [
-	"return ... aString is the key"
+	"Creates an expression that reads the value associated with the given key from the registry."
 
 	^ 'globalThis.__dap_registry__[' , aString , ']'
 ]
 
 { #category : 'accessing' }
 DAPBackendJavaScript >> store: aString forExpression: objExpr [
+	"Stores the given expression in the registry under the specified key."
 
 	clientDAP
 		stackTrace:

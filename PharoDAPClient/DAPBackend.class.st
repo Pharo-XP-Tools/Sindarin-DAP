@@ -16,12 +16,18 @@ Class {
 
 { #category : 'accessing' }
 DAPBackend >> buildInstanceCondition: objExpr [
+	"Builds an equality condition that compares the current instance
+    identifier with the identifier of the given object expression.
+
+    The object expression is first stored in the registry using a
+    generated key. The corresponding read expression is then created
+    and compared to the current instance identifier."
 
 	| key leftExpr rightExpr |
 	key := self generateKey.
 	self store: key forExpression: objExpr.
 
-	leftExpr := self idExpressionFor: self instanceName.
+	leftExpr := self instanceName.
 	rightExpr := self readExpressionForKey: key.
 
 	^ self equalityExpressionLeft: leftExpr right: rightExpr
@@ -43,18 +49,23 @@ DAPBackend >> constructorsOf: classExpr [
 
 { #category : 'accessing' }
 DAPBackend >> equalityExpressionLeft: leftExpr right: rightExpr [
+	"Return an equality expression between two expressions."
 
-	^ self subclassResponsibility 
+	^ self subclassResponsibility
 ]
 
 { #category : 'accessing' }
 DAPBackend >> expressionKey: varExpr instanceOf: classExpr [
+	"Creates an expression that checks whether the given variable
+    expression is an instance of the specified class expression."
 
 	^ self subclassResponsibility
 ]
 
 { #category : 'accessing' }
 DAPBackend >> generateKey [
+	"Generates a unique key used to store and retrieve expressions
+    from the registry."
 
 	^ 'instance_' , UUID new asString
 ]
@@ -66,15 +77,9 @@ DAPBackend >> hashExpressionFor: aString [
 	^ self subclassResponsibility
 ]
 
-{ #category : 'accessing' }
-DAPBackend >> idExpressionFor: objExpr [
-	"^ aString"
-
-	^ self subclassResponsibility
-]
-
 { #category : 'initialization' }
 DAPBackend >> initializeRegistry [
+	"Initializes the registry used to store data in the debuggee program."
 
 	^ self subclassResponsibility
 ]
@@ -96,13 +101,14 @@ DAPBackend >> methodsOf: objExpr [
 
 { #category : 'accessing' }
 DAPBackend >> readExpressionForKey: aString [
-	"return ... aString is the key"
+	"Creates an expression that reads the value associated with the given key from the registry."
 
 	^ self subclassResponsibility
 ]
 
 { #category : 'accessing' }
 DAPBackend >> store: aString forExpression: objExpr [
-	
-	^ self subclassResponsibility 
+	"Stores the given expression in the registry under the specified key."
+
+	^ self subclassResponsibility
 ]

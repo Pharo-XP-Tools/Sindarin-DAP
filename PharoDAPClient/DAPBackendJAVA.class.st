@@ -23,12 +23,15 @@ DAPBackendJava >> constructorsOf: classExpr [
 
 { #category : 'accessing' }
 DAPBackendJava >> equalityExpressionLeft: leftExpr right: rightExpr [
+	"Return an equality expression between two expressions."
 
-	^ leftExpr , '.equals(' , rightExpr , ')'
+	^ leftExpr , ' == ' , rightExpr
 ]
 
 { #category : 'accessing' }
 DAPBackendJava >> expressionKey: varExpr instanceOf: classExpr [
+	"Creates an expression that checks whether the given variable
+    expression is an instance of the specified class expression."
 
 	^ varExpr , ' instanceof ' , classExpr
 ]
@@ -41,22 +44,18 @@ DAPBackendJava >> hashExpressionFor: aString [
 	^ 'System.identityHashCode(' , aString , ')'
 ]
 
-{ #category : 'accessing' }
-DAPBackendJava >> idExpressionFor: expr [
-
-	^ 'Integer.toString(' , self hashExpressionFor: expr , ')'
-]
-
 { #category : 'initialization' }
 DAPBackendJava >> initializeRegistry [
-	" In Java, there is no need to initialize a global registry.
-	The java.lang.System object already exists and is globally accessible in the JVM.
+	"Initializes the registry used to store data in the debuggee program."
 
-	We use it as a simple key/value store via System.setProperty / System.getProperty.
-
-	Because this storage is already built into the runtime, there is nothing to create or inject. "
-
-	
+	clientDAP
+		stackTrace:
+		(DAPStackTraceArguments new threadId: clientDAP mainThreadId)
+		onResponse: [ :resp |
+				clientDAP evaluate: (DAPEvaluateArguments new
+						 expression:
+							 'System.getProperties().putIfAbsent("__dap_registry__", new java.util.HashMap<String,Object>())';
+						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
 ]
 
 { #category : 'accessing' }
@@ -89,13 +88,15 @@ DAPBackendJava >> methodsOf: objExpr [
 
 { #category : 'accessing' }
 DAPBackendJava >> readExpressionForKey: aString [
-	"return ... aString is the key"
+	"Creates an expression that reads the value associated with the given key from the registry."
 
-	^ 'System.getProperty("' , aString , '")'
+	^ '((java.util.Map<String,Object>)System.getProperties().get("__dap_registry__")).get("'
+	  , aString , '")'
 ]
 
 { #category : 'accessing' }
 DAPBackendJava >> store: aString forExpression: objExpr [
+	"Stores the given expression in the registry under the specified key."
 
 	clientDAP
 		stackTrace:
@@ -103,7 +104,7 @@ DAPBackendJava >> store: aString forExpression: objExpr [
 		onResponse: [ :resp |
 				clientDAP evaluate: (DAPEvaluateArguments new
 						 expression:
-							 'System.setProperty("' , aString , '", '
-							 , (self idExpressionFor: objExpr) , ')';
+							 '((java.util.Map<String, Object>)System.getProperties().get("__dap_registry__")).put("'
+							 , aString , '", ' , objExpr , ')';
 						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
 ]
