@@ -24,7 +24,7 @@ DAPBackendJava >> constructorsOf: classExpr [
 { #category : 'accessing' }
 DAPBackendJava >> equalityExpressionLeft: leftExpr right: rightExpr [
 
-	^ leftExpr , '.equals(' , rightExpr , ')'
+	^ leftExpr , ' == ' , rightExpr
 ]
 
 { #category : 'accessing' }
@@ -44,19 +44,20 @@ DAPBackendJava >> hashExpressionFor: aString [
 { #category : 'accessing' }
 DAPBackendJava >> idExpressionFor: expr [
 
-	^ 'Integer.toString(' , self hashExpressionFor: expr , ')'
+	^ expr
 ]
 
 { #category : 'initialization' }
 DAPBackendJava >> initializeRegistry [
-	" In Java, there is no need to initialize a global registry.
-	The java.lang.System object already exists and is globally accessible in the JVM.
 
-	We use it as a simple key/value store via System.setProperty / System.getProperty.
-
-	Because this storage is already built into the runtime, there is nothing to create or inject. "
-
-	
+	clientDAP
+		stackTrace:
+		(DAPStackTraceArguments new threadId: clientDAP mainThreadId)
+		onResponse: [ :resp |
+				clientDAP evaluate: (DAPEvaluateArguments new
+						 expression:
+							 'System.getProperties().putIfAbsent("__dap_registry__", new java.util.HashMap<String,Object>())';
+						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
 ]
 
 { #category : 'accessing' }
@@ -91,7 +92,8 @@ DAPBackendJava >> methodsOf: objExpr [
 DAPBackendJava >> readExpressionForKey: aString [
 	"return ... aString is the key"
 
-	^ 'System.getProperty("' , aString , '")'
+	^ '((java.util.Map<String,Object>)System.getProperties().get("__dap_registry__")).get("'
+	  , aString , '")'
 ]
 
 { #category : 'accessing' }
@@ -103,7 +105,7 @@ DAPBackendJava >> store: aString forExpression: objExpr [
 		onResponse: [ :resp |
 				clientDAP evaluate: (DAPEvaluateArguments new
 						 expression:
-							 'System.setProperty("' , aString , '", '
-							 , (self idExpressionFor: objExpr) , ')';
+							 '((java.util.Map<String, Object>)System.getProperties().get("__dap_registry__")).put("'
+							 , aString , '", ' , objExpr , ')';
 						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
 ]
