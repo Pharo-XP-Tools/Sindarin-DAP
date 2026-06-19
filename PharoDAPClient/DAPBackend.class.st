@@ -27,7 +27,7 @@ DAPBackend >> buildInstanceCondition: objExpr [
 	key := self generateKey.
 	self store: key forExpression: objExpr.
 
-	leftExpr := self idExpressionFor: self instanceName.
+	leftExpr := self instanceName.
 	rightExpr := self readExpressionForKey: key.
 
 	^ self equalityExpressionLeft: leftExpr right: rightExpr
@@ -73,13 +73,6 @@ DAPBackend >> generateKey [
 { #category : 'actions' }
 DAPBackend >> hashExpressionFor: aString [
 	"Return an expression that when evaluated by the debug adapter computes the hash of aString."
-
-	^ self subclassResponsibility
-]
-
-{ #category : 'accessing' }
-DAPBackend >> idExpressionFor: objExpr [
-	"Creates an expression that retrieves the identifier of the given object expression."
 
 	^ self subclassResponsibility
 ]

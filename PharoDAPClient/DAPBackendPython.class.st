@@ -42,13 +42,6 @@ DAPBackendPython >> hashExpressionFor: aString [
 	^ 'id(' , aString , ')'
 ]
 
-{ #category : 'accessing' }
-DAPBackendPython >> idExpressionFor: objExpr [
-	"Creates an expression that retrieves the identifier of the given object expression."
-
-	^ objExpr
-]
-
 { #category : 'initialization' }
 DAPBackendPython >> initializeRegistry [
 	"Initializes the registry used to store data in the debuggee program."

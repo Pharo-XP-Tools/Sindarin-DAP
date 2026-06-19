@@ -44,13 +44,6 @@ DAPBackendJava >> hashExpressionFor: aString [
 	^ 'System.identityHashCode(' , aString , ')'
 ]
 
-{ #category : 'accessing' }
-DAPBackendJava >> idExpressionFor: expr [
-	"Creates an expression that retrieves the identifier of the given object expression."
-
-	^ expr
-]
-
 { #category : 'initialization' }
 DAPBackendJava >> initializeRegistry [
 	"Initializes the registry used to store data in the debuggee program."
