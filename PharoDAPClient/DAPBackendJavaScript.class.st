@@ -39,7 +39,11 @@ DAPBackendJavaScript >> hashExpressionFor: aString [
 	"Return an expression that when evaluated by the debug adapter computes the identity hash of aString.
 	Not supported for JS"
 
-	^ ''
+	^ 'globalThis.__dap_object_ids__.get(' , aString
+	  , ') ?? (globalThis.__dap_object_ids__.set(' , aString
+	  ,
+	  ', globalThis.__dap_next_id__++), globalThis.__dap_object_ids__.get('
+	  , aString , '))'
 ]
 
 { #category : 'initialization' }
@@ -50,10 +54,24 @@ DAPBackendJavaScript >> initializeRegistry [
 		stackTrace:
 		(DAPStackTraceArguments new threadId: clientDAP mainThreadId)
 		onResponse: [ :resp |
+				| frameId |
+				frameId := ((resp at: 'body') at: 'stackFrames') first at: 'id'.
+
 				clientDAP setExpression: (DAPSetExpressionArguments new
 						 expression: 'globalThis.__dap_registry__';
 						 value: '{}';
-						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
+						 frameId: frameId).
+
+				"Initializes the registry used to get object ids"
+				clientDAP setExpression: (DAPSetExpressionArguments new
+						 expression: 'globalThis.__dap_object_ids__';
+						 value: 'new WeakMap()';
+						 frameId: frameId).
+
+				clientDAP setExpression: (DAPSetExpressionArguments new
+						 expression: 'globalThis.__dap_next_id__';
+						 value: '1';
+						 frameId: frameId) ]
 ]
 
 { #category : 'accessing' }
