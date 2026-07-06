@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'bpManger',
 		'evaluatorTrue',
-		'evaluatorFalse'
+		'evaluatorFalse',
+		'supportsFunctionBreakpointsTrue',
+		'supportsFunctionBreakpointsFalse'
 	],
 	#category : 'PharoDAPClient-Tests',
 	#package : 'PharoDAPClient-Tests'
@@ -21,11 +23,48 @@ DAPClientBreakpointManagerTest >> setUp [
 	(evaluatorTrue stub evaluateBoolean: Any frameId: Any) willReturn: true.
 
 	evaluatorFalse := Mock new.
-	(evaluatorFalse stub evaluateBoolean: Any frameId: Any) willReturn: false
+	(evaluatorFalse stub evaluateBoolean: Any frameId: Any) willReturn: false.
+	
+	supportsFunctionBreakpointsTrue := Mock new.
+	(supportsFunctionBreakpointsTrue stub adapterSupport: Any) willReturn: true.
+
+	supportsFunctionBreakpointsFalse := Mock new.
+	(supportsFunctionBreakpointsFalse stub adapterSupport: Any) willReturn: false
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugJAVA [
+DAPClientBreakpointManagerTest >> testGiveContinueStrategyFor [
+
+	self
+		assert:
+			(bpManger giveContinueStrategyFor: supportsFunctionBreakpointsTrue)
+				class
+		equals: DebugContinueStrategy.
+
+	self
+		assert:
+			(bpManger giveContinueStrategyFor: supportsFunctionBreakpointsFalse)
+				class
+		equals: StepUntilStrategy.
+
+	"When breakpoint manager own an InvokeBreakpoint it should return StepUntilStrategy every time"
+	bpManger addInvokeBreakpoint: DAPInvokeBreakpoint new.
+
+	self
+		assert:
+			(bpManger giveContinueStrategyFor: supportsFunctionBreakpointsTrue)
+				class
+		equals: StepUntilStrategy.
+
+	self
+		assert:
+			(bpManger giveContinueStrategyFor: supportsFunctionBreakpointsFalse)
+				class
+		equals: StepUntilStrategy
+]
+
+{ #category : 'tests' }
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForFromDebugJAVA [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
@@ -41,12 +80,13 @@ DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugJ
 		         ('name' -> 'Bar.setStr(String)').
 		         ('id' -> 1) } asDictionary.
 
-	self assert:
-		(bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self assert: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugJS [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForFromDebugJS [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
@@ -65,17 +105,18 @@ DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugJ
 		          'Bar.toto [/Users/flavienvolant/Documents/sindarin-dap/js/script.js]').
 		         ('id' -> 61) } asDictionary.
 
-	self assert:
-		(bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self assert: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugPY [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForFromDebugPY [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
 		(DAPFunctionBreakpoint new name: 'setStr').
-	
+
 	frame := {
 		         ('source' -> {
 			          ('path' -> 'path/to/python/file.py').
@@ -85,11 +126,13 @@ DAPClientBreakpointManagerTest >> testShouldBreakForFunctionBreakpointFromDebugP
 		         ('name' -> 'bar.setStr').
 		         ('id' -> 4) } asDictionary.
 
-	self assert: (bpManger shouldBreakFor: frame evaluator: evaluatorTrue )
+	self assert: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldBreakWhenAtLeastOneFunctionBreakpointMatches [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForShouldBreakWhenAtLeastOneFunctionBreakpointMatches [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
@@ -106,12 +149,13 @@ DAPClientBreakpointManagerTest >> testShouldBreakWhenAtLeastOneFunctionBreakpoin
 		         ('name' -> 'bar.thisIsNottoto').
 		         ('id' -> 4) } asDictionary.
 
-	self assert:
-		(bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self assert: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldBreakWhenFunctionbreakpointConditionIsTrue [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForShouldBreakWhenFunctionbreakpointConditionIsTrue [
 
 	| frame |
 	bpManger addFunctionBreakpoint: (DAPFunctionBreakpoint new
@@ -127,12 +171,13 @@ DAPClientBreakpointManagerTest >> testShouldBreakWhenFunctionbreakpointCondition
 		         ('name' -> 'bar.toto').
 		         ('id' -> 4) } asDictionary.
 
-	self assert:
-		(bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self assert: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldNotBreakWhenFunctionNameDoesNotMatchBreakpoint [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForShouldNotBreakWhenFunctionNameDoesNotMatchBreakpoint [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
@@ -149,11 +194,11 @@ DAPClientBreakpointManagerTest >> testShouldNotBreakWhenFunctionNameDoesNotMatch
 		         ('name' -> 'bar.setStr').
 		         ('id' -> 4) } asDictionary.
 
-	self deny: (bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self deny: (bpManger isFunctionBreakpointTriggeredFor: frame evaluator: evaluatorTrue)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldNotBreakWhenFunctionbreakpointConditionIsFalse [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForShouldNotBreakWhenFunctionbreakpointConditionIsFalse [
 
 	| frame |
 	bpManger := DAPClientBreakpointManager new.
@@ -170,11 +215,13 @@ DAPClientBreakpointManagerTest >> testShouldNotBreakWhenFunctionbreakpointCondit
 		         ('name' -> 'bar.toto').
 		         ('id' -> 4) } asDictionary.
 
-	self deny: (bpManger shouldBreakFor: frame evaluator: evaluatorFalse)
+	self deny: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorFalse)
 ]
 
 { #category : 'tests' }
-DAPClientBreakpointManagerTest >> testShouldNotMatchPartialFunctionNameToBreakpoint [
+DAPClientBreakpointManagerTest >> testIsFunctionBreakpointTriggeredForShouldNotMatchPartialFunctionNameToBreakpoint [
 
 	| frame |
 	bpManger addFunctionBreakpoint:
@@ -189,5 +236,33 @@ DAPClientBreakpointManagerTest >> testShouldNotMatchPartialFunctionNameToBreakpo
 		         ('name' -> 'bar.thisIsNottoto').
 		         ('id' -> 4) } asDictionary.
 
-	self deny: (bpManger shouldBreakFor: frame evaluator: evaluatorTrue)
+	self deny: (bpManger
+			 isFunctionBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
+]
+
+{ #category : 'tests' }
+DAPClientBreakpointManagerTest >> testIsInvokeBreakpointTriggeredFor [
+	"Invoke Breakpoints are only checking the sender, therefore the logic is in evaluator and how to create this condition"
+
+	| frame |
+	frame := { ('id' -> 1) } asDictionary.
+
+	self deny: (bpManger
+			 isInvokeBreakpointTriggeredFor: frame
+			 evaluator: evaluatorFalse).
+
+	self deny: (bpManger
+			 isInvokeBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue).
+
+	bpManger addInvokeBreakpoint: (DAPInvokeBreakpoint new condition: '').
+
+	self deny: (bpManger
+			 isInvokeBreakpointTriggeredFor: frame
+			 evaluator: evaluatorFalse).
+
+	self assert: (bpManger
+			 isInvokeBreakpointTriggeredFor: frame
+			 evaluator: evaluatorTrue)
 ]

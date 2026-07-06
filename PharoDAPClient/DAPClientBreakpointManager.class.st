@@ -10,7 +10,8 @@ Class {
 	#instVars : [
 		'breakpoints',
 		'functionBreakpoints',
-		'dataBreakpoints'
+		'dataBreakpoints',
+		'invokeBreakpoints'
 	],
 	#category : 'PharoDAPClient-Model',
 	#package : 'PharoDAPClient',
@@ -35,10 +36,29 @@ DAPClientBreakpointManager >> addFunctionBreakpoint: aDAPFunctionBreakpoint [
 	functionBreakpoints add: aDAPFunctionBreakpoint
 ]
 
+{ #category : 'adding' }
+DAPClientBreakpointManager >> addInvokeBreakpoint: anInvokeBreakpoint [
+
+	invokeBreakpoints add: anInvokeBreakpoint
+]
+
 { #category : 'helpers' }
 DAPClientBreakpointManager >> extractFunctionName: aString [
 
 	^ (aString findTokens: '.') last
+]
+
+{ #category : 'accessing' }
+DAPClientBreakpointManager >> giveContinueStrategyFor: aDAPClient [
+	"Answer a continue strategy for a specific dap client"
+
+	(aDAPClient adapterSupport: 'supportsFunctionBreakpoints') ifFalse: [
+		^ StepUntilStrategy new ].
+
+	invokeBreakpoints ifNotEmpty: [ ^ StepUntilStrategy new ].
+
+
+	^ DebugContinueStrategy new
 ]
 
 { #category : 'initialization' }
@@ -47,7 +67,46 @@ DAPClientBreakpointManager >> initialize [
 	super initialize.
 	breakpoints := OrderedCollection new.
 	functionBreakpoints := OrderedCollection new.
-	dataBreakpoints := OrderedCollection new
+	dataBreakpoints := OrderedCollection new.
+	invokeBreakpoints := OrderedCollection new
+]
+
+{ #category : 'asserting' }
+DAPClientBreakpointManager >> isFunctionBreakpointTriggeredFor: aDAPStackFrame evaluator: clientDAP [
+
+	| functionName |
+	functionName := self extractFunctionName:
+		                (self normalizeFrameName:
+			                 (aDAPStackFrame at: 'name')).
+	^ functionBreakpoints anySatisfy: [ :functionBreakpoint |
+			  functionBreakpoint name = functionName and: [
+					  clientDAP
+						  evaluateBoolean: functionBreakpoint condition
+						  frameId: (aDAPStackFrame at: 'id') ] ]
+]
+
+{ #category : 'asserting' }
+DAPClientBreakpointManager >> isInvokeBreakpointTriggeredFor: aDAPStackFrame evaluator: clientDAP [
+
+	^ invokeBreakpoints anySatisfy: [ :invokeBreakpoint |
+			  clientDAP
+				  evaluateBoolean: invokeBreakpoint condition
+				  frameId: (aDAPStackFrame at: 'id') ]
+]
+
+{ #category : 'asserting' }
+DAPClientBreakpointManager >> isTriggeredFor: aDAPStackFrames evaluator: clientDAP [
+	"Anwser whether or not aDAPStackFrames trigger an halt"
+
+	^ [
+		  (self
+			   isFunctionBreakpointTriggeredFor: aDAPStackFrames first
+			   evaluator: clientDAP) or: [
+				  self
+					  isInvokeBreakpointTriggeredFor: aDAPStackFrames second
+					  evaluator: clientDAP ] ]
+		  on: Error
+		  do: [ ^ false ]
 ]
 
 { #category : 'helpers' }
@@ -89,18 +148,4 @@ DAPClientBreakpointManager >> setFunctionBreakPointsFor: aDAPClient [
 	aDAPClient setFunctionBreakpoints:
 		(DAPSetFunctionBreakpointsArguments new breakpoints:
 			 functionBreakpoints asArray)
-]
-
-{ #category : 'asserting' }
-DAPClientBreakpointManager >> shouldBreakFor: aDAPStackFrame evaluator: clientDAP [
-
-	| functionName |
-	functionName := self extractFunctionName:
-		                (self normalizeFrameName:
-			                 (aDAPStackFrame at: 'name')).
-	^ functionBreakpoints anySatisfy: [ :breakpoint |
-			  breakpoint name = functionName and: [
-					  clientDAP
-						  evaluateBoolean: breakpoint condition
-						  frameId: (aDAPStackFrame at: 'id') ] ]
 ]
