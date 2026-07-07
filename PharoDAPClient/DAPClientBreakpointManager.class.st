@@ -73,6 +73,7 @@ DAPClientBreakpointManager >> initialize [
 
 { #category : 'asserting' }
 DAPClientBreakpointManager >> isFunctionBreakpointTriggeredFor: aDAPStackFrame evaluator: clientDAP [
+	"Answer whether aDAPStackFrame should halt due to a function breakpoint. Breakpoint conditions are evaluated in the context of the receiver frame by the clientDAP."
 
 	| functionName |
 	functionName := self extractFunctionName:
@@ -87,6 +88,7 @@ DAPClientBreakpointManager >> isFunctionBreakpointTriggeredFor: aDAPStackFrame e
 
 { #category : 'asserting' }
 DAPClientBreakpointManager >> isInvokeBreakpointTriggeredFor: aDAPStackFrame evaluator: clientDAP [
+	"Answer whether aDAPStackFrame should halt due to an invoke breakpoint. Breakpoint conditions are evaluated in the context of the sender frame by the clientDAP."
 
 	^ invokeBreakpoints anySatisfy: [ :invokeBreakpoint |
 			  clientDAP
@@ -96,7 +98,7 @@ DAPClientBreakpointManager >> isInvokeBreakpointTriggeredFor: aDAPStackFrame eva
 
 { #category : 'asserting' }
 DAPClientBreakpointManager >> isTriggeredFor: aDAPStackFrames evaluator: clientDAP [
-	"Anwser whether or not aDAPStackFrames trigger an halt"
+	"Answer whether any function or invoke breakpoint is triggered for aDAPStackFrames."
 
 	^ [
 		  (self
