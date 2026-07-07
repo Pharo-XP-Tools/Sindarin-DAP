@@ -11,11 +11,12 @@ Class {
 
 { #category : 'requests' }
 StepUntilStrategy >> continue: sindarinDAPClient [
-	"work in progress for function bp only"
+	"work in progress for function and invoke bp only"
 
 	sindarinDAPClient stepUntil: [
 			sindarinDAPClient hasEnteredNewCall and: [
 					sindarinDAPClient breakpointManager
-						shouldBreakFor: sindarinDAPClient currentFrame
+						isTriggeredFor:
+						(sindarinDAPClient stackFrames: sindarinDAPClient mainThreadId)
 						evaluator: sindarinDAPClient ] ]
 ]

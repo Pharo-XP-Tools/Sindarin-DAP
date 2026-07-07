@@ -35,9 +35,7 @@ SindarinDAPClient >> breakpointManager [
 { #category : 'stepping - steps' }
 SindarinDAPClient >> continue [
 
-	(self adapterSupport: 'supportsFunctionBreakpoints')
-		ifTrue: [ DebugContinueStrategy new continue: self ]
-		ifFalse: [ StepUntilStrategy new continue: self ]
+	(breakpointManager giveContinueStrategyFor: self) continue: self
 ]
 
 { #category : 'stack access' }
@@ -136,6 +134,14 @@ SindarinDAPClient >> haltOnCreation: className [
 				(backend expressionKey: backend instanceName instanceOf: className) ].
 
 	breakpointManager setFunctionBreakPointsFor: self
+]
+
+{ #category : 'api - breakpoints' }
+SindarinDAPClient >> haltOnInvoke: objName [
+
+	breakpointManager addInvokeBreakpoint:
+		(DAPInvokeBreakpoint new condition:
+			 (backend buildInstanceCondition: objName))
 ]
 
 { #category : 'api - breakpoints' }
