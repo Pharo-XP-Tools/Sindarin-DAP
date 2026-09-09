@@ -44,16 +44,20 @@ DAPBackendPython >> hashExpressionFor: aString [
 
 { #category : 'initialization' }
 DAPBackendPython >> initializeRegistry [
-	"Initializes the registry used to store data in the debuggee program."
+	"Initializes the registry used to store data in the debuggee program.
+
+	 A failed stackTrace response carries no #body. Reading it raised a KeyNotFound
+	 inside the listener process, killing it, and the image then waited forever for
+	 responses nobody could deliver any more."
 
 	clientDAP
-		stackTrace:
-		(DAPStackTraceArguments new threadId: clientDAP mainThreadId)
+		stackTrace: (DAPStackTraceArguments new threadId: clientDAP mainThreadId)
 		onResponse: [ :resp |
+			(resp at: 'success' ifAbsent: [ false ]) ifTrue: [
 				clientDAP evaluate: (DAPEvaluateArguments new
 						 expression:
 							 '__import__("builtins").__dict__.setdefault("__dap_registry__", {})';
-						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
+						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ] ]
 ]
 
 { #category : 'accessing' }
@@ -88,12 +92,12 @@ DAPBackendPython >> store: aString forExpression: objExpr [
 	"Stores the given expression in the registry under the specified key."
 
 	clientDAP
-		stackTrace:
-		(DAPStackTraceArguments new threadId: clientDAP mainThreadId)
+		stackTrace: (DAPStackTraceArguments new threadId: clientDAP mainThreadId)
 		onResponse: [ :resp |
+			(resp at: 'success' ifAbsent: [ false ]) ifTrue: [
 				clientDAP setExpression: (DAPSetExpressionArguments new
 						 expression:
 							 '__import__("builtins").__dap_registry__["' , aString , '"]';
 						 value: objExpr;
-						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ]
+						 frameId: (((resp at: 'body') at: 'stackFrames') first at: 'id')) ] ]
 ]

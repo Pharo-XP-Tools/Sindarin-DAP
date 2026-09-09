@@ -220,7 +220,7 @@ DAPClient >> handleRequest: requestAsDict [
 	callback value: requestAsDict
 ]
 
-{ #category : 'communication' }
+{ #category : 'handling' }
 DAPClient >> handleResponse: responseAsDict [
 
 	| request_seq callback |
@@ -228,7 +228,7 @@ DAPClient >> handleResponse: responseAsDict [
 	dapHistory addResponse: responseAsDict.
 
 	request_seq := responseAsDict at: 'request_seq'.
-	callback := responseHandlers at: request_seq.
+	callback := responseHandlers at: request_seq ifAbsent: [ ^ self ].
 	responseHandlers removeKey: request_seq.
 	callback value: responseAsDict
 ]
@@ -516,19 +516,27 @@ DAPClient >> stackTrace: stackTraceArguments onResponse: aBlock [
 	self sendRequest: request onResponse: aBlock 
 ]
 
-{ #category : 'communication' }
+{ #category : 'connection open/close' }
 DAPClient >> startListening [
+	"Read the messages sent by the adapter. An error raised by one handler must never
+	 terminate this process: nobody would deliver the responses any more and every
+	 caller of handleAsyncRawResponse: would wait forever."
 
 	listenerProcess := [
 		[
-			| json |
-			json := self readMessageAsDict.
-			
-			(json at: #type) = 'event' ifTrue: [ self handleEvent: json ].
-			(json at: #type) = 'response' ifTrue: [ self handleResponse: json ].
-			(json at: #type) = 'request' ifTrue: [ self handleRequest: json ].
+			[ | json |
+			  json := self readMessageAsDict.
 
-		] repeat 
+			  (json at: #type) = 'event' ifTrue: [ self handleEvent: json ].
+			  (json at: #type) = 'response' ifTrue: [ self handleResponse: json ].
+			  (json at: #type) = 'request' ifTrue: [ self handleRequest: json ] ]
+				on: Error
+				do: [ :ex |
+					Transcript
+						show: 'DAPClient listener ignored an error: ' , ex description;
+						cr.
+					(Delay forMilliseconds: 200) wait ]
+		] repeat
 	] fork
 ]
 

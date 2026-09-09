@@ -170,15 +170,26 @@ SindarinDAPClient >> haltOnWrite: objName attribute: attrName [
 
 { #category : 'private' }
 SindarinDAPClient >> handleAsyncRawResponse: anAction [
-    | response |
 
-    response := nil.
 
-    anAction value: [ :resp | response := resp ].
+	| response semaphore |
+	response := nil.
+	semaphore := Semaphore new.
 
-    [ response ] whileNil: [ (Delay forMilliseconds: 10) wait ].
+	anAction value: [ :resp |
+		response := resp.
+		semaphore signal ].
 
-    ^ response
+	semaphore
+		waitTimeoutSeconds: self responseTimeoutSeconds
+		onCompletion: [ ]
+		onTimeout: [
+			^ RequestFailedError new signal:
+				  'No answer from the debug adapter after '
+				  , self responseTimeoutSeconds printString
+				  , ' s. The debuggee is probably not suspended, or already terminated.' ].
+
+	^ response
 ]
 
 { #category : 'private' }
@@ -189,10 +200,12 @@ SindarinDAPClient >> handleAsyncResponse: anAction [
 	| response |
 	response := self handleAsyncRawResponse: anAction.
 
-	(response at: 'success') ifFalse: [
-		^ RequestFailedError new signal: 'Request failed !' ].
+	(response at: 'success' ifAbsent: [ false ]) ifFalse: [
+		^ RequestFailedError new signal:
+			  'DAP request "' , (response at: 'command' ifAbsent: [ '?' ])
+			  , '" failed: ' , (response at: 'message' ifAbsent: [ 'no message' ]) ].
 
-	^ response at: 'body'
+	^ response at: 'body' ifAbsent: [ Dictionary new ]
 ]
 
 { #category : 'private' }
@@ -274,6 +287,20 @@ SindarinDAPClient >> receiver [
 	^ self
 		  variableFor: backend instanceName
 		  inStackFrame: self currentFrameId
+]
+
+{ #category : 'private' }
+SindarinDAPClient >> responseTimeout [
+	"Maximum delay waited for a response of the debug adapter."
+
+	^ self responseTimeoutSeconds seconds 
+]
+
+{ #category : 'private' }
+SindarinDAPClient >> responseTimeoutSeconds [
+	"Maximum delay, in seconds, waited for a response of the debug adapter."
+
+	^ 30
 ]
 
 { #category : 'stack access' }
@@ -360,20 +387,22 @@ SindarinDAPClient >> stackFrames: threadId [
 
 { #category : 'private' }
 SindarinDAPClient >> stepInWaitForStoppedEvent [
-	"Perform a step-in request and block until the adapter reports a
-    stopped event or the execution terminates."
 
-	| stopped |
-	stopped := false.
+	| semaphore |
+	semaphore := Semaphore new.
 
-	self onEvent: 'stopped' do: [ :event | stopped := true ].
+	self onEvent: 'stopped' do: [ :event | semaphore signal ].
+	self onEvent: 'terminated' do: [ :event | semaphore signal ].
+	self onEvent: 'exited' do: [ :event | semaphore signal ].
 
 	self stepIn: (DAPStepInArguments new
 			 threadId: self mainThreadId;
 			 yourself).
 
-	[ stopped ] whileFalse: [
-		self isExecutionFinished ifTrue: [ stopped := true ] ]
+	semaphore
+		waitTimeoutSeconds: self responseTimeoutSeconds
+		onCompletion: [ ]
+		onTimeout: [ ]
 ]
 
 { #category : 'stepping - steps' }
