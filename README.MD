@@ -11,7 +11,7 @@ The client currently works exclusively over socket connections.
 ``` smalltalk
 Metacello new
 	baseline: 'PharoDAPClient';
-	repository: 'github://FlavienVolant/sindarin-dap:main';
+	repository: 'github://Pharo-XP-Tools/sindarin-dap:main';
 	load
 ```
 
