@@ -1,5 +1,8 @@
 # Sindarin-DAP
 
+This project provides an implementations of [Object-Centric Breakpoints](https://hal.science/hal-04948470) for Java, Python and Javascript.
+Documentation [here](https://github.com/Pharo-XP-Tools/Sindarin-DAP/blob/main/scriptExamples/Object-Centric-Breakpoints.md).
+
 `Sindarin-DAP` is an implementation of a Debug Adapter Protocol (DAP) client. It relies on the structures and types provided by [Pharo-LanguageServer](https://github.com/Pharo-XP-Tools/Pharo-LanguageServer/tree/DAP-Tools).
 
 The goal of this project is to map Sindarin commands with their DAP equivalents, allowing the debugger to be controlled through Sindarin scripts.
