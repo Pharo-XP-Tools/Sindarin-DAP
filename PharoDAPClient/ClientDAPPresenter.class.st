@@ -88,13 +88,14 @@ ClientDAPPresenter >> colorForMessage: messageAsDict [
 	| type |
 	type := messageAsDict at: #type.
 
-	type = 'request' ifTrue: [ ^ Color lightBlue ].
+	type = 'request' ifTrue: [ ^ Smalltalk ui theme caretColor ].
 	type = 'response' ifTrue: [
-			(messageAsDict at: #success) ifTrue: [ ^ Color lightGreen ].
-			^ Color red ].
-	type = 'event' ifTrue: [ ^ Color lightOrange ].
+			(messageAsDict at: #success) ifTrue: [
+				^ Smalltalk ui theme successTextColor ].
+			^ Smalltalk ui theme dangerTextColor ].
+	type = 'event' ifTrue: [ ^ Smalltalk ui theme ghostTextColor ].
 
-	^ Color white
+	^ Smalltalk ui theme textColor
 ]
 
 { #category : 'commands' }
