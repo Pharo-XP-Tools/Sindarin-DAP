@@ -11,7 +11,8 @@ Class {
 		'requestPresenter',
 		'responsePresenter',
 		'clientDAP',
-		'messageListPresenter'
+		'messageListPresenter',
+		'callStackPresenter'
 	],
 	#category : 'PharoDAPClient-Presenters',
 	#package : 'PharoDAPClient',
@@ -132,10 +133,14 @@ ClientDAPPresenter >> defaultLayout [
 		  add: #commandBarPresenter height: 40;
 		  add: (SpPanedLayout newLeftToRight
 				   add: #messageListPresenter;
-				   add: (SpPanedLayout newTopToBottom
-						    add: #requestPresenter;
-						    add: #responsePresenter;
-						    yourself);
+				   add: (SpBoxLayout newLeftToRight
+						    add: (SpPanedLayout newTopToBottom
+								     add: #requestPresenter;
+								     add: #responsePresenter;
+								     yourself);
+						    add: (SpBoxLayout newTopToBottom
+								     add: #callStackPresenter;
+								     yourself) yourself);
 				   positionOfSlider: 300;
 				   yourself);
 		  yourself
@@ -226,6 +231,24 @@ ClientDAPPresenter >> gotoTarget: line [
 ]
 
 { #category : 'initialization' }
+ClientDAPPresenter >> initializeCallStackPresenter [
+
+	callStackPresenter := self newEasyTreeListView.
+
+	callStackPresenter items: #(  ).
+	callStackPresenter display: [ :e | e name ].
+	callStackPresenter displayIcon: [ :e | e icon ].
+	callStackPresenter children: [ :item | item children ].
+	callStackPresenter contextMenu: (SpMenuPresenter new
+			 addItem: [ :item |
+					 item
+						 name: 'Inspect';
+						 action: [ callStackPresenter selectedItem data inspect ];
+						 icon: (self iconNamed: #smallInspectIt) ];
+			 yourself)
+]
+
+{ #category : 'initialization' }
 ClientDAPPresenter >> initializeCommandBar [
 	
 	commandBarPresenter := self newToolbar.
@@ -282,8 +305,10 @@ ClientDAPPresenter >> initializePresenters [
 
 	self initializeCommandBar.
 	self initializeMessageList.
+	self initializeCallStackPresenter.
 	self initializeRequest.
-	self initializeResponse
+	self initializeResponse.
+	
 ]
 
 { #category : 'initialization' }
@@ -432,6 +457,28 @@ ClientDAPPresenter >> threads [
 ]
 
 { #category : 'update' }
+ClientDAPPresenter >> updateCallStackPresenter: anArray [
+
+	| treeItems mainThreadItem |
+	self flag:
+		'For now considering only a single thread (the main one) but should be given later the collection of all active threads.'.
+	treeItems := OrderedCollection new.
+	mainThreadItem := SDAPTreeListViewItem new.
+	mainThreadItem name: 'Main thread'.
+	mainThreadItem icon: (self iconNamed: #spawn).
+	mainThreadItem data: anArray.
+	mainThreadItem children: (anArray collect: [ :e |
+				 | frameItem |
+				 frameItem := SDAPTreeListViewItem new.
+				 frameItem name: (e at: 'name').
+				 frameItem icon: (self iconNamed: #protocolPublic).
+				 frameItem data: e.
+				 frameItem children: #(  ) ]).
+	treeItems add: mainThreadItem.
+	callStackPresenter items: treeItems
+]
+
+{ #category : 'update' }
 ClientDAPPresenter >> updateMessageList [
 
 	messageListPresenter items:
@@ -454,7 +501,9 @@ ClientDAPPresenter >> updateWithRequest: aDAPRequest [
 { #category : 'event handling' }
 ClientDAPPresenter >> updateWithResponse: aDAPResponse [
 
-	self updateMessageList
+	self updateMessageList.
+	(aDAPResponse at: 'command') = 'stackTrace' ifTrue: [
+		self updateCallStackPresenter: ((aDAPResponse at: 'body') at: 'stackFrames')]
 ]
 
 { #category : 'commands' }
