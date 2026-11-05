@@ -12,7 +12,8 @@ Class {
 		'responsePresenter',
 		'clientDAP',
 		'messageListPresenter',
-		'callStackPresenter'
+		'callStackPresenter',
+		'codePresenter'
 	],
 	#category : 'PharoDAPClient-Presenters',
 	#package : 'PharoDAPClient',
@@ -140,6 +141,7 @@ ClientDAPPresenter >> defaultLayout [
 								     yourself);
 						    add: (SpBoxLayout newTopToBottom
 								     add: #callStackPresenter;
+								     add: #codePresenter;
 								     yourself) yourself);
 				   positionOfSlider: 300;
 				   yourself);
@@ -245,7 +247,20 @@ ClientDAPPresenter >> initializeCallStackPresenter [
 						 name: 'Inspect';
 						 action: [ callStackPresenter selectedItem data inspect ];
 						 icon: (self iconNamed: #smallInspectIt) ];
-			 yourself)
+			 yourself).
+	callStackPresenter whenSelectedItemChangedDo: [ :item |
+		item ifNotNil: [ self updateCodePresenter: item data ] ]
+]
+
+{ #category : 'initialization' }
+ClientDAPPresenter >> initializeCodePresenter [
+
+	codePresenter := self newCode.
+	codePresenter
+		beNotEditable;
+		text: '';
+		syntaxHighlight: false;
+		withLineNumbers
 ]
 
 { #category : 'initialization' }
@@ -306,6 +321,7 @@ ClientDAPPresenter >> initializePresenters [
 	self initializeCommandBar.
 	self initializeMessageList.
 	self initializeCallStackPresenter.
+	self initializeCodePresenter.
 	self initializeRequest.
 	self initializeResponse.
 	
@@ -476,6 +492,24 @@ ClientDAPPresenter >> updateCallStackPresenter: anArray [
 				 frameItem children: #(  ) ]).
 	treeItems add: mainThreadItem.
 	callStackPresenter items: treeItems
+]
+
+{ #category : 'update' }
+ClientDAPPresenter >> updateCodePresenter: frame [
+
+	| file sourceCode lineNumber cursorIndex |
+	file := ((frame at: 'source') at: 'path') asFileReference.
+	sourceCode := file contents.
+	codePresenter text: sourceCode.
+	lineNumber := frame at: 'line'.
+	cursorIndex := lineNumber = 1
+		               ifTrue: [ 1 ]
+		               ifFalse: [
+				               ((1 to: lineNumber) collect: [ :i |
+					                (sourceCode lineNumber: i) size ]) sum ].
+
+	codePresenter cursorPositionIndex: cursorIndex.
+	codePresenter selectionInterval: codePresenter selectLine
 ]
 
 { #category : 'update' }
