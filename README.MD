@@ -11,7 +11,7 @@ The client currently works exclusively over socket connections.
 
 ## Installation
 
-Create de *Pharo 13* image and then launch in a playground:
+Create de **Pharo 13** image and then launch in a playground:
 
 ``` smalltalk
 Metacello new
@@ -118,7 +118,7 @@ For python, we suggest to use [`debugpy`](https://github.com/microsoft/debugpy) 
 
 #### Installation
 
-First create a virtual environment in the project where you want to debug `python3 -m venv venv` then activate it `source venv/bin/activate` and install `debugpy` using pip `pip install debugpy`
+First create a virtual environment in the project where you want to debug `python3 -m venv venv` then activate it `source venv/bin/activate` and install debugpy using pip `pip install debugpy`
 
 #### Starting the DAP Adapter
 
