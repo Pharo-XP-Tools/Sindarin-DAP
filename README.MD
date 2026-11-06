@@ -11,6 +11,8 @@ The client currently works exclusively over socket connections.
 
 ## Installation
 
+Create de *Pharo 13* image and then launch in a playground:
+
 ``` smalltalk
 Metacello new
 	baseline: 'PharoDAPClient';
@@ -116,22 +118,17 @@ For python, we suggest to use [`debugpy`](https://github.com/microsoft/debugpy) 
 
 #### Installation
 
-Install `debugpy` using pip:
-
-```bash
-pip install debugpy
-```
+First create a virtual environment in the project where you want to debug `python3 -m venv venv` then activate it `source venv/bin/activate` and install `debugpy` using pip `pip install debugpy`
 
 #### Starting the DAP Adapter
 
-Run your Python script with `debugpy` and wait for the client to attach:
+Run the debugpy adapter and listen on port 5678: 
 
 ```bash
-python -m debugpy --listen 5678 --wait-for-client myPythonScript.py
+venv/bin/debugpy-adapter --port 5678
 ```
 
 You can choose an other port than 5678 but it is the common one for debugpy.
-
 
 ### Java
 
